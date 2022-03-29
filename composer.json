@@ -1,0 +1,20 @@
+{
+    "name": "symandy/database-backup-bundle",
+    "description": "A Symfony Bundle to handle databases backup",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Symandy\\DatabaseBackupBundle\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Samaël Villette",
+            "email": "villette.samael@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    }
+}
