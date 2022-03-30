@@ -38,3 +38,8 @@ jobs:
 
             -   name: Run static analysis
                 run: composer run-script analyse
+
+            -   name: Execute tests (Unit tests) via PHPUnit
+                env:
+                    SYMFONY_DEPRECATIONS_HELPER: 'max[direct]=0'
+                run: composer run-script test

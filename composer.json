@@ -20,9 +20,12 @@
         "symfony/dependency-injection": "^6.0"
     },
     "require-dev": {
-        "phpstan/phpstan": "^1.5"
+        "phpstan/phpstan": "^1.5",
+        "phpunit/phpunit": "^9.5",
+        "symfony/phpunit-bridge": "^6.0"
     },
     "scripts": {
-        "analyse": "vendor/bin/phpstan analyse"
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/phpunit"
     }
 }
