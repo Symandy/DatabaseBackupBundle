@@ -16,6 +16,13 @@
     ],
     "require": {
         "php": ">=8.1",
-        "symfony/http-kernel": "^6.0"
+        "symfony/http-kernel": "^6.0",
+        "symfony/dependency-injection": "^6.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.5"
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse"
     }
 }

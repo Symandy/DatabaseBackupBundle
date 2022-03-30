@@ -35,3 +35,6 @@ jobs:
 
             -   name: Install Dependencies
                 run: composer update -q --no-ansi --no-interaction --no-progress
+
+            -   name: Run static analysis
+                run: composer run-script analyse
