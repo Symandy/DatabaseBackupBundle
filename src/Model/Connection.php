@@ -7,6 +7,9 @@ namespace Symandy\DatabaseBackupBundle\Model;
 interface Connection
 {
 
+    /**
+     * @return array<string, string|int|float>
+     */
     public function getOptions(): array;
 
 }

@@ -10,8 +10,12 @@ use Symandy\DatabaseBackupBundle\Model\Connection;
 final class ConnectionRegistry implements ConnectionRegistryInterface
 {
 
+    /** @var array<string, Connection> */
     private array $registry = [];
 
+    /**
+     * @return array<string, Connection>
+     */
     public function all(): array
     {
         return $this->registry;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symandy\DatabaseBackupBundle\DependencyInjection;
 
 use Symandy\DatabaseBackupBundle\Model\ConnectionDriver;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
