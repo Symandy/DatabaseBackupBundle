@@ -1,0 +1,5 @@
+services:
+    # add public inlined or removed services in test
+    symandy_database_backup.registry.connection_registry:
+        class: Symandy\DatabaseBackupBundle\Registry\ConnectionRegistry
+        public: true

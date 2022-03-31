@@ -25,6 +25,8 @@ final class RegisterConnectionsPass implements CompilerPassInterface
         foreach ($connections as $name => $options) {
             $definition->addMethodCall('registerFromNameAndOptions', [$name, $options]);
         }
+
+        $container->getParameterBag()->remove('symandy.connections');
     }
 
 }

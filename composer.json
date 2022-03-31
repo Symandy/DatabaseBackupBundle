@@ -28,7 +28,9 @@
     "require-dev": {
         "phpstan/phpstan": "^1.5",
         "phpunit/phpunit": "^9.5",
-        "symfony/phpunit-bridge": "^6.0"
+        "symfony/phpunit-bridge": "^6.0",
+        "symfony/framework-bundle": "^6.0",
+        "symfony/yaml": "^6.0"
     },
     "scripts": {
         "analyse": "vendor/bin/phpstan analyse",
