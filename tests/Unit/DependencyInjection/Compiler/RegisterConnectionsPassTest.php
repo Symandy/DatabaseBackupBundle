@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Symandy\Tests\DatabaseBackupBundle\Unit\DependencyInjection;
+namespace Symandy\Tests\DatabaseBackupBundle\Unit\DependencyInjection\Compiler;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
