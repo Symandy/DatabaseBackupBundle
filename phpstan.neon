@@ -2,3 +2,7 @@ parameters:
     level: 9
     paths:
         - src
+    ignoreErrors:
+        - '#PHPDoc tag @var for variable \$connections has no value type specified in iterable type array.#'
+        - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::fixXmlConfig\(\).#'
+        - '#Symandy\\DatabaseBackupBundle\\DependencyInjection\\SymandyDatabaseBackupExtension::loadInternal\(\) has parameter \$mergedConfig with no value type specified in iterable type array.#'

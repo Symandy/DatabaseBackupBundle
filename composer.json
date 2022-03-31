@@ -8,6 +8,11 @@
             "Symandy\\DatabaseBackupBundle\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Symandy\\Tests\\DatabaseBackupBundle\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Samaël Villette",
@@ -17,12 +22,15 @@
     "require": {
         "php": ">=8.1",
         "symfony/http-kernel": "^6.0",
-        "symfony/dependency-injection": "^6.0"
+        "symfony/dependency-injection": "^6.0",
+        "symfony/config": "^6.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^1.5",
         "phpunit/phpunit": "^9.5",
-        "symfony/phpunit-bridge": "^6.0"
+        "symfony/phpunit-bridge": "^6.0",
+        "symfony/framework-bundle": "^6.0",
+        "symfony/yaml": "^6.0"
     },
     "scripts": {
         "analyse": "vendor/bin/phpstan analyse",
