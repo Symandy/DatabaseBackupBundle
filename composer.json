@@ -8,6 +8,11 @@
             "Symandy\\DatabaseBackupBundle\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Symandy\\Tests\\DatabaseBackupBundle\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Samaël Villette",
