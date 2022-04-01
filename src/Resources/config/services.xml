@@ -8,6 +8,11 @@
     <services>
         <defaults public="false" autowire="false"/>
 
+        <service id="Symandy\DatabaseBackupBundle\Command\BackupDatabasesCommand">
+            <argument type="service" key="$connectionRegistry" id="symandy_database_backup.registry.connection_registry"/>
+            <tag>console.command</tag>
+        </service>
+
         <service id="symandy_database_backup.registry.connection_registry" class="Symandy\DatabaseBackupBundle\Registry\ConnectionRegistry"/>
         <service id="Symandy\DatabaseBackupBundle\Registry\ConnectionRegistryInterface" alias="symandy_database_backup.registry.connection_registry"/>
     </services>

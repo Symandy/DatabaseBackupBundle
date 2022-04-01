@@ -14,7 +14,7 @@ final class ConnectionFactory
     /**
      * @param array<string, int|string|float> $options
      */
-    public static function create(array $options): Connection
+    public static function create(string $name, array $options): Connection
     {
         /** @var ConnectionDriver $driver */
         $driver =
@@ -25,7 +25,7 @@ final class ConnectionFactory
         /** @var class-string<Connection> $classname */
         $classname = $driver->getConnectionClass();
 
-        return new $classname(...$options['configuration']);
+        return new $classname(...['name' => $name], ...$options['configuration']);
     }
 
 }

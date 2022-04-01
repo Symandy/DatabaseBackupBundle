@@ -8,11 +8,17 @@ final class MySQLConnection implements Connection
 {
 
     public function __construct(
+        private readonly string $name,
         private readonly ?string $user = null,
         private readonly ?string $password = null,
         private readonly ?string $host = 'localhost',
         private readonly ?int $port = 3306
     ) {
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
     }
 
     public function getUser(): ?string
