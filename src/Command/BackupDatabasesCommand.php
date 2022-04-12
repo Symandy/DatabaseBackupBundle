@@ -63,21 +63,33 @@ final class BackupDatabasesCommand extends Command
 
         $mysqldump = (new ExecutableFinder())->find('mysqldump');
 
+        /** @var MySQLConnection $connection */
         foreach ($connectionsToExport as $connection) {
-            /** @var MySQLConnection $connection */
-
             $dumpSqlCommand = sprintf(
-                "MYSQL_PWD=%s $mysqldump -u %s extranet > %s-%s.sql",
-                $connection->getPassword(),
-                $connection->getUser(),
-                $connection->getName(),
-                (new DateTime())->format('Y-m-d')
+                '%s -u "${:DB_USER}" -h "${:DB_HOST}" -P "${:DB_PORT}" --databases %s > "${:FILENAME}".sql',
+                $mysqldump,
+                implode(' ', $connection->getDatabases()),
             );
 
             $io->info(sprintf("Start exporting databases for %s connection", $connection->getName()));
 
             $process = Process::fromShellCommandline($dumpSqlCommand);
-            $process->run(fn () => $io->success('Dump succeed'));
+            $process->setPty(Process::isPtySupported());
+            $process->run(null, [
+                'DB_USER' => $connection->getUser(),
+                'DB_HOST' => $connection->getHost(),
+                'DB_PORT' => $connection->getPort(),
+                'MYSQL_PWD' => $connection->getPassword(),
+                'FILENAME' => sprintf('%s-%s', $connection->getName(), (new DateTime())->format('Y-m-d'))
+            ]);
+
+            if (!$process->isSuccessful()) {
+                $io->error($process->getErrorOutput());
+
+                return Command::FAILURE;
+            }
+
+            $io->success(sprintf('Connection %s have been exported', $connection->getName()));
         }
 
         return Command::SUCCESS;

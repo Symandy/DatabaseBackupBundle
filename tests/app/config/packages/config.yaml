@@ -1,2 +1,26 @@
 framework:
     test: true
+
+symandy_database_backup:
+    connections:
+        main:
+            driver: mysql
+            configuration:
+                user: '%test.database_user%'
+                password: '%test.database_password%'
+                host: '%test.database_host%'
+                port: '%test.database_port%'
+                databases: ['%test.database_name%']
+
+parameters:
+    env(TEST_DATABASE_USER): root
+    env(TEST_DATABASE_PASSWORD): ~
+    env(TEST_DATABASE_HOST): localhost
+    env(TEST_DATABASE_PORT): '3306'
+    env(TEST_DATABASE_NAME): db_test
+
+    test.database_user: '%env(TEST_DATABASE_USER)%'
+    test.database_password: '%env(TEST_DATABASE_PASSWORD)%'
+    test.database_host: '%env(TEST_DATABASE_HOST)%'
+    test.database_port: '%env(int:TEST_DATABASE_PORT)%'
+    test.database_name: '%env(TEST_DATABASE_NAME)%'

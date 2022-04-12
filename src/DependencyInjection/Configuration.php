@@ -35,7 +35,7 @@ final class Configuration implements ConfigurationInterface
                                     ->scalarNode('user')->end()
                                     ->scalarNode('password')->end()
                                     ->scalarNode('host')->end()
-                                    ->scalarNode('port')->end()
+                                    ->integerNode('port')->end()
                                     ->arrayNode('databases')
                                         ->scalarPrototype()->end()
                                     ->end()
