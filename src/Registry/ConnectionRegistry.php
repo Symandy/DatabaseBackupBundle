@@ -21,6 +21,11 @@ final class ConnectionRegistry implements ConnectionRegistryInterface
         return $this->registry;
     }
 
+    public function has(string $name): bool
+    {
+        return array_key_exists($name, $this->registry);
+    }
+
     public function get(string $name): Connection
     {
         return $this->registry[$name] ?? throw new \InvalidArgumentException("Connection $name does not exists");
@@ -33,7 +38,7 @@ final class ConnectionRegistry implements ConnectionRegistryInterface
 
     public function registerFromNameAndOptions(string $name, array $options): void
     {
-        $this->register($name, ConnectionFactory::create($options));
+        $this->register($name, ConnectionFactory::create($name, $options));
     }
 
 }

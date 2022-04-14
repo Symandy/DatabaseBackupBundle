@@ -1,4 +1,4 @@
-name: Build
+name: Local build
 on:
     push:
         branches:
@@ -10,16 +10,18 @@ on:
 
 jobs:
     build:
-        if: ${{ !github.event.act }}
+        if: ${{ github.event.act }}
         runs-on: ubuntu-latest
         services:
             mysql:
                 image: mysql:8
                 env:
-                    MYSQL_ROOT_PASSWORD: symandy
+                    MYSQL_USER: symandy
+                    MYSQL_PASSWORD: symandy
+                    MYSQL_ROOT_PASSWORD: root
                     MYSQL_DATABASE: db_test_1
                 ports:
-                    - 3306
+                    - 52000:3306
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
         strategy:
@@ -31,18 +33,8 @@ jobs:
             -   uses: shivammathur/setup-php@v2
                 with:
                     php-version: ${{ matrix.php-version }}
-                    extensions: mysql
 
             -   uses: actions/checkout@v2
-
-            -   name: Cache Composer packages
-                id: composer-cache
-                uses: actions/cache@v2
-                with:
-                    path: vendor
-                    key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-                    restore-keys: |
-                        ${{ runner.os }}-php-
 
             -   name: Install Dependencies
                 run: composer update -q --no-ansi --no-interaction --no-progress
@@ -50,10 +42,15 @@ jobs:
             -   name: Run static analysis
                 run: composer run-script analyse
 
+#            -   name: Mysql Dump
+#                run: MYSQL_PWD=root mysqldump -u root -h 172.17.0.2 -P 3306 --databases db_test_1 > db_test_1.sql
+
             -   name: Execute tests (Unit tests) via PHPUnit
                 env:
                     SYMFONY_DEPRECATIONS_HELPER: 'max[direct]=0'
                     TEST_DATABASE_USER: root
-                    TEST_DATABASE_PASSWORD: symandy
-                    TEST_DATABASE_PORT: ${{ job.services.mysql.ports['3306'] }}
+                    TEST_DATABASE_PASSWORD: root
+                    TEST_DATABASE_HOST: 172.17.0.2
+                    TEST_DATABASE_PORT: 3306
+                    TEST_DATABASE_NAME: db_test_1
                 run: composer run-script test

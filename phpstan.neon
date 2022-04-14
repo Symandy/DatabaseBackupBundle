@@ -2,7 +2,16 @@ parameters:
     level: 9
     paths:
         - src
+        - tests/Functional
+        - tests/Unit
     ignoreErrors:
+        # src
         - '#PHPDoc tag @var for variable \$connections has no value type specified in iterable type array.#'
         - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::fixXmlConfig\(\).#'
         - '#Symandy\\DatabaseBackupBundle\\DependencyInjection\\SymandyDatabaseBackupExtension::loadInternal\(\) has parameter \$mergedConfig with no value type specified in iterable type array.#'
+
+        # tests
+        - '#Method Symandy\\Tests\\DatabaseBackupBundle\\Functional\\Command\\BackupDatabasesCommandTest::getConnectionOptions\(\) return type has no value type specified in iterable type array.#'
+        - '#Method Symandy\\Tests\\DatabaseBackupBundle\\Unit\\DependencyInjection\\Compiler\\RegisterConnectionsPassTest::getConnectionsConfiguration\(\) return type has no value type specified in iterable type array.#'
+        - '#Method Symandy\\Tests\\DatabaseBackupBundle\\Unit\\DependencyInjection\\ConfigurationTest::processConfiguration\(\) has parameter \$configs with no value type specified in iterable type array.#'
+        - '#Method Symandy\\Tests\\DatabaseBackupBundle\\Unit\\DependencyInjection\\ConfigurationTest::processConfiguration\(\) return type has no value type specified in iterable type array.#'

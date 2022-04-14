@@ -14,6 +14,8 @@ interface ConnectionRegistryInterface
      */
     public function all(): array;
 
+    public function has(string $name): bool;
+
     public function get(string $name): Connection;
 
     public function register(string $name, Connection $connection): void;

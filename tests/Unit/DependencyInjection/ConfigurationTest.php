@@ -85,6 +85,7 @@ final class ConfigurationTest extends TestCase
                         'password' => 'password-test',
                         'host' => 'host-test',
                         'port' => 0000,
+                        'databases' => ['db-1', 'db-2']
                     ]
                 ]
             ]
@@ -101,11 +102,16 @@ final class ConfigurationTest extends TestCase
         self::assertArrayHasKey('password', $connectionConfiguration);
         self::assertArrayHasKey('host', $connectionConfiguration);
         self::assertArrayHasKey('port', $connectionConfiguration);
+        self::assertArrayHasKey('databases', $connectionConfiguration);
 
         self::assertEquals('user-test', $connectionConfiguration['user']);
         self::assertEquals('password-test', $connectionConfiguration['password']);
         self::assertEquals('host-test', $connectionConfiguration['host']);
         self::assertEquals(0000, $connectionConfiguration['port']);
+
+        self::assertContainsEquals('db-1', $connectionConfiguration['databases']);
+        self::assertContainsEquals('db-2', $connectionConfiguration['databases']);
+        self::assertNotContainsEquals('db-3', $connectionConfiguration['databases']);
     }
 
     private function processConfiguration(array $configs = []): array
