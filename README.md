@@ -42,6 +42,7 @@ symandy_database_backup:
                 password: "%app.foo_db_password%"
                 host: 127.0.0.1 # Already the default value, don't need to be added
                 port: 3306 # Already the default value, don't need to be added
+                databases: [foo, bar, baz] # Will only back up these databases
 ```
 
 ## Usage
