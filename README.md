@@ -33,10 +33,20 @@ symandy_database_backup:
         foo:
            # driver: !php/const \Symandy\DatabaseBackupBundle\Model\ConnectionDriver::MySQL
             driver: mysql
+            
+            # Usage of environment variables as parameters is recommended for connections configuration
             configuration:
                 user: "%app.foo_db_user%"
                 password: "%app.foo_db_password%"
-                host: localhost # Already the default value, don't need to be added
+                host: 127.0.0.1 # Already the default value, don't need to be added
                 port: 3306 # Already the default value, don't need to be added
-
 ```
+
+## Usage
+Once the connections are configured, you only have to run the following command to generate the dumped databases files:
+
+```shell
+php bin/console symandy:databases:backup
+```
+
+It will generate one file by connection in the format `<connection_name>-<current_year>-<current_month>-<current_day>.sql`.
