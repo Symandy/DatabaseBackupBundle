@@ -2,6 +2,8 @@
 
 DatabaseBackupBundle is a Symfony Bundle to manage your databases backup.  
 
+[![Build](https://github.com/Symandy/DatabaseBackupBundle/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Symandy/DatabaseBackupBundle/actions/workflows/build.yml)
+
 ## Installation
 
 ```shell
