@@ -25,6 +25,8 @@ return [
 ```
 
 ## Configuration
+
+### YAML configuration
 As in the previous part, if Symfony Flex is not enabled, add the following file (`symandy_database_backup.yaml`) 
 to `config/packages` directory.
 
@@ -44,6 +46,10 @@ symandy_database_backup:
                 port: 3306 # Already the default value, don't need to be added
                 databases: [foo, bar, baz] # Will only back up these databases
 ```
+
+### Drivers
+
+Only the `mysql` driver is currently available.
 
 ## Usage
 Once the connections are configured, you only have to run the following command to generate the dumped databases files:
