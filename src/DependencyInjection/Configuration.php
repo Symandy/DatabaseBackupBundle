@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Symandy\DatabaseBackupBundle\DependencyInjection;
 
-use Symandy\DatabaseBackupBundle\Model\ConnectionDriver;
+use Symandy\DatabaseBackupBundle\Model\Connection\ConnectionDriver;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 

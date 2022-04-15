@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Symandy\DatabaseBackupBundle\Model;
+namespace Symandy\DatabaseBackupBundle\Model\Connection;
 
 enum ConnectionDriver: string
 {

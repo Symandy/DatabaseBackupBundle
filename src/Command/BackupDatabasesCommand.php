@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Symandy\DatabaseBackupBundle\Command;
 
 use DateTime;
-use Symandy\DatabaseBackupBundle\Model\MySQLConnection;
+use Symandy\DatabaseBackupBundle\Model\Connection\MySQLConnection;
 use Symandy\DatabaseBackupBundle\Registry\ConnectionRegistryInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

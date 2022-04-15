@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Symandy\DatabaseBackupBundle\Factory;
 
 use InvalidArgumentException;
-use Symandy\DatabaseBackupBundle\Model\Connection;
-use Symandy\DatabaseBackupBundle\Model\ConnectionDriver;
+use Symandy\DatabaseBackupBundle\Model\Connection\Connection;
+use Symandy\DatabaseBackupBundle\Model\Connection\ConnectionDriver;
 
 final class ConnectionFactory
 {

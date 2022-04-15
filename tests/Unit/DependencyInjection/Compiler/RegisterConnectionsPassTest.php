@@ -7,7 +7,7 @@ namespace Symandy\Tests\DatabaseBackupBundle\Unit\DependencyInjection\Compiler;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Symandy\DatabaseBackupBundle\DependencyInjection\Compiler\RegisterConnectionsPass;
-use Symandy\DatabaseBackupBundle\Model\ConnectionDriver;
+use Symandy\DatabaseBackupBundle\Model\Connection\ConnectionDriver;
 use Symandy\DatabaseBackupBundle\Registry\ConnectionRegistry;
 use Symandy\DatabaseBackupBundle\Registry\ConnectionRegistryInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

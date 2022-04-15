@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Symandy\DatabaseBackupBundle\Registry;
 
-use Symandy\DatabaseBackupBundle\Model\Connection;
+use Symandy\DatabaseBackupBundle\Model\Connection\Connection;
 
 interface ConnectionRegistryInterface
 {

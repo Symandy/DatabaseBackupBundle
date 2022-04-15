@@ -6,7 +6,7 @@ namespace Symandy\Tests\DatabaseBackupBundle\Unit\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
 use Symandy\DatabaseBackupBundle\DependencyInjection\Configuration;
-use Symandy\DatabaseBackupBundle\Model\ConnectionDriver;
+use Symandy\DatabaseBackupBundle\Model\Connection\ConnectionDriver;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use ValueError;

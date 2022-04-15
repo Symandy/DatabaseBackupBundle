@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Symandy\DatabaseBackupBundle\DependencyInjection\Compiler;
 
-use Symandy\DatabaseBackupBundle\Model\ConnectionDriver;
+use Symandy\DatabaseBackupBundle\Model\Connection\ConnectionDriver;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
