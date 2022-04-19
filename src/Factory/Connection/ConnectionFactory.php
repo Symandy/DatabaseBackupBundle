@@ -2,19 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Symandy\DatabaseBackupBundle\Factory;
+namespace Symandy\DatabaseBackupBundle\Factory\Connection;
 
 use InvalidArgumentException;
+use Symandy\DatabaseBackupBundle\Factory\Factory;
+use Symandy\DatabaseBackupBundle\Factory\FactoryInterface;
 use Symandy\DatabaseBackupBundle\Model\Connection\Connection;
 use Symandy\DatabaseBackupBundle\Model\Connection\ConnectionDriver;
 
-final class ConnectionFactory
+/**
+ * @implements FactoryInterface<Connection>
+ */
+final class ConnectionFactory implements FactoryInterface
 {
 
-    /**
-     * @param array<string, int|string|float> $options
-     */
-    public static function create(string $name, array $options): Connection
+    public function create(array $options): Connection
     {
         /** @var ConnectionDriver $driver */
         $driver =
@@ -25,7 +27,10 @@ final class ConnectionFactory
         /** @var class-string<Connection> $classname */
         $classname = $driver->getConnectionClass();
 
-        return new $classname(...['name' => $name], ...$options['configuration']);
+        /** @var FactoryInterface<Connection> $factory */
+        $factory = new Factory($classname);
+
+        return $factory->create($options['configuration']);
     }
 
 }

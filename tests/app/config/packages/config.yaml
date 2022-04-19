@@ -2,15 +2,19 @@ framework:
     test: true
 
 symandy_database_backup:
-    connections:
+    backups:
         main:
-            driver: mysql
-            configuration:
-                user: '%test.database_user%'
-                password: '%test.database_password%'
-                host: '%test.database_host%'
-                port: '%test.database_port%'
-                databases: ['%test.database_name%']
+            connection:
+                driver: mysql
+                configuration:
+                    user: '%test.database_user%'
+                    password: '%test.database_password%'
+                    host: '%test.database_host%'
+                    port: '%test.database_port%'
+                    databases: ['%test.database_name%']
+            strategy:
+                max_files: 5
+                output_directory: "%kernel.project_dir%/backup"
 
 parameters:
     env(TEST_DATABASE_USER): root

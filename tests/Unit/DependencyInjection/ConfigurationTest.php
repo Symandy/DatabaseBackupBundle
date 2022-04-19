@@ -18,8 +18,8 @@ final class ConfigurationTest extends TestCase
     {
         $configuration = $this->processConfiguration();
 
-        self::assertArrayHasKey('connections', $configuration);
-        self::assertEmpty($configuration['connections']);
+        self::assertArrayHasKey('backups', $configuration);
+        self::assertEmpty($configuration['backups']);
     }
 
     public function testDriverNotExist(): void
@@ -27,8 +27,23 @@ final class ConfigurationTest extends TestCase
         $this->expectException(ValueError::class);
 
         $this->processConfiguration([[
-            'connections' => [
-                'test' => ['driver' => 'unknown']
+            'backups' => [
+                'test' => [
+                    'connection' => [
+                        'driver' => 'unknown'
+                    ]
+                ]
+            ]
+        ]]);
+    }
+
+    public function testNoConnection(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->processConfiguration([[
+            'backups' => [
+                'test' => []
             ]
         ]]);
     }
@@ -38,8 +53,10 @@ final class ConfigurationTest extends TestCase
         $this->expectException(InvalidConfigurationException::class);
 
         $this->processConfiguration([[
-            'connections' => [
-                'test' => []
+            'backups' => [
+                'test' => [
+                    'connection' => []
+                ]
             ]
         ]]);
     }
@@ -47,20 +64,28 @@ final class ConfigurationTest extends TestCase
     public function testDriverValue(): void
     {
         $configuration = $this->processConfiguration([[
-            'connections' => [
-                'test' => ['driver' => 'mysql']
+            'backups' => [
+                'test' => [
+                    'connection' => [
+                        'driver' => 'mysql'
+                    ]
+                ]
             ]
         ]]);
 
-        self::assertEquals(ConnectionDriver::MySQL, $configuration['connections']['test']['driver']);
+        self::assertEquals(ConnectionDriver::MySQL, $configuration['backups']['test']['connection']['driver']);
 
         $configuration = $this->processConfiguration([[
-            'connections' => [
-                'test' => ['driver' => ConnectionDriver::MySQL]
+            'backups' => [
+                'test' => [
+                    'connection' => [
+                        'driver' => ConnectionDriver::MySQL
+                    ]
+                ]
             ]
         ]]);
 
-        self::assertEquals(ConnectionDriver::MySQL, $configuration['connections']['test']['driver']);
+        self::assertEquals(ConnectionDriver::MySQL, $configuration['backups']['test']['connection']['driver']);
     }
 
     public function testInvalidOptions(): void
@@ -68,8 +93,12 @@ final class ConfigurationTest extends TestCase
         $this->expectException(InvalidConfigurationException::class);
 
         $this->processConfiguration([[
-            'connections' => [
-                'test' => ['driver' => 'mysql', 'unknown-parameter' => 'test']
+            'backups' => [
+                'test' => [
+                    'connection' => [
+                        'driver' => 'mysql', 'unknown-parameter' => 'test'
+                    ]
+                ]
             ]
         ]]);
     }
@@ -77,27 +106,32 @@ final class ConfigurationTest extends TestCase
     public function testConfigurationValues(): void
     {
         $configuration = $this->processConfiguration([[
-            'connections' => [
+            'backups' => [
                 'test' => [
-                    'driver' => ConnectionDriver::MySQL,
-                    'configuration' => [
-                        'user' => 'user-test',
-                        'password' => 'password-test',
-                        'host' => 'host-test',
-                        'port' => 0000,
-                        'databases' => ['db-1', 'db-2']
+                    'connection' => [
+                        'driver' => ConnectionDriver::MySQL,
+                        'configuration' => [
+                            'user' => 'user-test',
+                            'password' => 'password-test',
+                            'host' => 'host-test',
+                            'port' => 0000,
+                            'databases' => ['db-1', 'db-2']
+                        ]
                     ]
                 ]
             ]
         ]]);
 
         self::assertNotEmpty($configuration);
-        self::assertArrayHasKey('test', $configuration['connections']);
-        self::assertArrayHasKey('configuration', $configuration['connections']['test']);
+        self::assertArrayHasKey('test', $configuration['backups']);
+        self::assertArrayHasKey('connection', $configuration['backups']['test']);
 
-        $connectionConfiguration = $configuration['connections']['test']['configuration'];
+        $connectionNode = $configuration['backups']['test']['connection'];
+        self::assertIsArray($connectionNode);
+        self::assertArrayHasKey('configuration', $connectionNode);
+
+        $connectionConfiguration = $connectionNode['configuration'];
         self::assertIsArray($connectionConfiguration);
-
         self::assertArrayHasKey('user', $connectionConfiguration);
         self::assertArrayHasKey('password', $connectionConfiguration);
         self::assertArrayHasKey('host', $connectionConfiguration);

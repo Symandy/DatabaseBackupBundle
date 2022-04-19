@@ -21,7 +21,7 @@ final class SymandyDatabaseBackupExtension extends ConfigurableExtension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
 
-        $container->setParameter('symandy.connections', $mergedConfig['connections']);
+        $container->setParameter('symandy.backups', $mergedConfig['backups']);
     }
 
 }

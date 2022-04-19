@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Symandy\DatabaseBackupBundle\DependencyInjection\Compiler;
 
-use Symandy\DatabaseBackupBundle\Model\Connection\ConnectionDriver;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -13,20 +12,20 @@ final class RegisterConnectionsPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->has('symandy_database_backup.registry.connection_registry')) {
+        if (!$container->has('symandy_database_backup.registry.backup_registry')) {
             return;
         }
 
-        $definition = $container->getDefinition('symandy_database_backup.registry.connection_registry');
+        $definition = $container->getDefinition('symandy_database_backup.registry.backup_registry');
 
-        /** @var array<string, array{driver: ConnectionDriver, configuration: array}> $connections */
-        $connections = $container->getParameter('symandy.connections');
+        $backups = $container->getParameter('symandy.backups');
 
-        foreach ($connections as $name => $options) {
+        /** @var array<string, array<string, mixed>> $backups */
+        foreach ($backups as $name => $options) {
             $definition->addMethodCall('registerFromNameAndOptions', [$name, $options]);
         }
 
-        $container->getParameterBag()->remove('symandy.connections');
+        $container->getParameterBag()->remove('symandy.backups');
     }
 
 }
