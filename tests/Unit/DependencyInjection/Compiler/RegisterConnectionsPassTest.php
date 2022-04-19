@@ -12,7 +12,7 @@ use Symandy\DatabaseBackupBundle\Factory\Connection\ConnectionFactory;
 use Symandy\DatabaseBackupBundle\Factory\Factory;
 use Symandy\DatabaseBackupBundle\Model\Backup\Strategy;
 use Symandy\DatabaseBackupBundle\Model\Connection\ConnectionDriver;
-use Symandy\DatabaseBackupBundle\Registry\BackupRegistry;
+use Symandy\DatabaseBackupBundle\Registry\Backup\BackupRegistry;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Symandy\Tests\DatabaseBackupBundle\Functional;
 
-use Symandy\DatabaseBackupBundle\Registry\BackupRegistry;
+use Symandy\DatabaseBackupBundle\Registry\Backup\BackupRegistry;
 
 final class ContainerTest extends AbstractFunctionalTestCase
 {

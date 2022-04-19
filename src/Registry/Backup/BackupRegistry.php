@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Symandy\DatabaseBackupBundle\Registry;
+namespace Symandy\DatabaseBackupBundle\Registry\Backup;
 
 use Symandy\DatabaseBackupBundle\Factory\Backup\BackupFactory;
 use Symandy\DatabaseBackupBundle\Model\Backup\Backup;
+use Symandy\DatabaseBackupBundle\Registry\NamedRegistry;
+use Symandy\DatabaseBackupBundle\Registry\NamedRegistryTrait;
 
 /**
  * @implements NamedRegistry<Backup>

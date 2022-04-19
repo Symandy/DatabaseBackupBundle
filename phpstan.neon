@@ -8,7 +8,8 @@ parameters:
         # src
         - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::fixXmlConfig\(\).#'
         - '#Symandy\\DatabaseBackupBundle\\DependencyInjection\\SymandyDatabaseBackupExtension::loadInternal\(\) has parameter \$mergedConfig with no value type specified in iterable type array.#'
-        - '#Method Symandy\\DatabaseBackupBundle\\Registry\\BackupRegistry::registerFromNameAndOptions\(\) has parameter \$options with no value type specified in iterable type array.#'
+        - '#Method Symandy\\DatabaseBackupBundle\\Registry\\Backup\\BackupRegistry::registerFromNameAndOptions\(\) has parameter \$options with no value type specified in iterable type array.#'
+        - '#Method Symandy\\DatabaseBackupBundle\\Registry\\Backup\\BackupRegistryInterface::registerFromNameAndOptions\(\) has parameter \$options with no value type specified in iterable type array.#'
         - '#Method Symandy\\DatabaseBackupBundle\\Factory\\FactoryInterface::create\(\) has parameter \$options with no value type specified in iterable type array.#'
         - '#Method Symandy\\DatabaseBackupBundle\\Factory\\NamedFactoryInterface::createNamed\(\) has parameter \$options with no value type specified in iterable type array.#'
         - '#Method Symandy\\DatabaseBackupBundle\\Factory\\Factory::create\(\) has parameter \$options with no value type specified in iterable type array.#'

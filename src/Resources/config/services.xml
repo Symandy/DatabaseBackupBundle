@@ -26,9 +26,9 @@
         </service>
         <service id="Symandy\DatabaseBackupBundle\Factory\Backup\BackupFactory" alias="symandy_database_backup.factory.backup"/>
 
-        <service id="symandy_database_backup.registry.backup_registry" class="Symandy\DatabaseBackupBundle\Registry\BackupRegistry">
+        <service id="symandy_database_backup.registry.backup_registry" class="Symandy\DatabaseBackupBundle\Registry\Backup\BackupRegistry">
             <argument type="service" key="$backupFactory" id="symandy_database_backup.factory.backup"/>
         </service>
-        <service id="Symandy\DatabaseBackupBundle\Registry\BackupRegistry" alias="symandy_database_backup.registry.backup_registry"/>
+        <service id="Symandy\DatabaseBackupBundle\Registry\Backup\BackupRegistry" alias="symandy_database_backup.registry.backup_registry"/>
     </services>
 </container>

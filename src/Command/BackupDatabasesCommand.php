@@ -7,7 +7,7 @@ namespace Symandy\DatabaseBackupBundle\Command;
 use DateTime;
 use Symandy\DatabaseBackupBundle\Model\Backup\Backup;
 use Symandy\DatabaseBackupBundle\Model\Connection\MySQLConnection;
-use Symandy\DatabaseBackupBundle\Registry\BackupRegistry;
+use Symandy\DatabaseBackupBundle\Registry\Backup\BackupRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
