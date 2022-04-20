@@ -14,7 +14,7 @@ symandy_database_backup:
                     databases: ['%test.database_name%']
             strategy:
                 max_files: 5
-                output_directory: "%kernel.project_dir%/backup"
+                backup_directory: "%kernel.project_dir%/backups"
 
 parameters:
     env(TEST_DATABASE_USER): root

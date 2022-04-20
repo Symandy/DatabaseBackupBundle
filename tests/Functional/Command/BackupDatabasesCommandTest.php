@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Symandy\Tests\DatabaseBackupBundle\Functional\Command;
 
+use DateTime;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,6 +37,11 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
         }
 
         $schemaManager->createDatabase($options['dbname']);
+
+        $filesystem = new Filesystem();
+        if (!$filesystem->exists([self::$kernel->getProjectDir() . '/backups'])) {
+            $filesystem->mkdir([self::$kernel->getProjectDir() . '/backups']);
+        }
     }
 
     public function testBackupCommand(): void
@@ -45,14 +51,69 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
         }
 
         $application = new Application(self::$kernel);
+        $command = $application->find('symandy:databases:backup');
+        $commandTester = new CommandTester($command);
 
+        $commandTester->execute([]);
+        $commandTester->assertCommandIsSuccessful();
+        $backupFiles = (new Finder())
+            ->in([self::$kernel->getProjectDir() . '/backups'])
+            ->depth('== 0')
+            ->name(['main-db_test_1-*.sql'])
+            ->files()
+            ->name('*.sql')
+        ;
+
+        self::assertEquals(1, $backupFiles->count());
+    }
+
+    public function testBackupCommandMaxFiles(): void
+    {
+        if (!self::$booted) {
+            self::bootKernel();
+        }
+
+        $filesystem = new Filesystem();
+        foreach (range(1, 10) as $day) {
+            $date = new DateTime("2022-04-$day");
+            $formattedDay = str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+
+            $filesystem->touch(
+                [self::$kernel->getProjectDir() . "/backups/main-db_test_1-2022-04-$formattedDay.sql"],
+                $date->getTimestamp()
+            );
+        }
+
+        $application = new Application(self::$kernel);
         $command = $application->find('symandy:databases:backup');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
-        $commandTester->assertCommandIsSuccessful();
+        $backupFilesFinder = (new Finder())
+            ->in([self::$kernel->getProjectDir() . '/backups'])
+            ->depth('== 0')
+            ->name(['main-db_test_1-*.sql'])
+            ->files()
+            ->name('*.sql')
+        ;
 
-        self::assertEquals(1, (new Finder())->in(['./'])->files()->name('*.sql')->count());
+        self::assertEquals(5, $backupFilesFinder->count());
+        $formattedTodayDate = (new DateTime())->format('Y-m-d');
+
+        $backupFiles = iterator_to_array($backupFilesFinder);
+        $filePathPrefix = self::$kernel->getProjectDir() . '/backups/main-db_test_1';
+
+        self::assertArrayNotHasKey("$filePathPrefix-2022-04-01.sql", $backupFiles);
+        self::assertArrayNotHasKey("$filePathPrefix-2022-04-02.sql", $backupFiles);
+        self::assertArrayNotHasKey("$filePathPrefix-2022-04-03.sql", $backupFiles);
+        self::assertArrayNotHasKey("$filePathPrefix-2022-04-04.sql", $backupFiles);
+        self::assertArrayNotHasKey("$filePathPrefix-2022-04-05.sql", $backupFiles);
+        self::assertArrayNotHasKey("$filePathPrefix-2022-04-06.sql", $backupFiles);
+        self::assertArrayHasKey("$filePathPrefix-2022-04-07.sql", $backupFiles);
+        self::assertArrayHasKey("$filePathPrefix-2022-04-08.sql", $backupFiles);
+        self::assertArrayHasKey("$filePathPrefix-2022-04-09.sql", $backupFiles);
+        self::assertArrayHasKey("$filePathPrefix-2022-04-10.sql", $backupFiles);
+        self::assertArrayHasKey("$filePathPrefix-$formattedTodayDate.sql", $backupFiles);
     }
 
     /**
@@ -70,9 +131,14 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
             $schemaManager->dropDatabase($options['dbname']);
         }
 
-        foreach ((new Finder())->in(['./'])->files()->name('*.sql') as $file) {
-            (new Filesystem())->remove([$file->getRealPath()]);
-        }
+        $backupFiles = (new Finder())
+            ->in([self::$kernel->getProjectDir() . '/backups'])
+            ->depth('== 0')
+            ->files()
+            ->name('*.sql')
+        ;
+
+        (new Filesystem())->remove($backupFiles);
     }
 
     private function getConnectionOptions(bool $withDbName = false): array

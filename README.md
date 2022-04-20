@@ -32,19 +32,24 @@ to `config/packages` directory.
 
 ```yaml
 symandy_database_backup:
-    connections:
-        # Multiple connections can be added
+    backups:
         foo:
-           # driver: !php/const \Symandy\DatabaseBackupBundle\Model\ConnectionDriver::MySQL
-            driver: mysql
-            
-            # Usage of environment variables as parameters is recommended for connections configuration
-            configuration:
-                user: "%app.foo_db_user%"
-                password: "%app.foo_db_password%"
-                host: 127.0.0.1 # Already the default value, don't need to be added
-                port: 3306 # Already the default value, don't need to be added
-                databases: [foo, bar, baz] # Will only back up these databases
+            connection:
+                # driver: !php/const \Symandy\DatabaseBackupBundle\Model\ConnectionDriver::MySQL
+                driver: mysql
+
+                # Usage of environment variables as parameters is recommended for connections configuration
+                configuration:
+                    user: "%app.foo_db_user%"
+                    password: "%app.foo_db_password%"
+                    host: 127.0.0.1 # Already the default value, don't need to be added
+                    port: 3306 # Already the default value, don't need to be added
+                    databases: [foo, bar, baz] # Will only back up these databases
+            strategy:
+                max_files: 5 # Number of files kept after a backup (per database)
+                # backup_directory: "/var/www/backups" # The directory must be created and must have the right permissions
+                backup_directory: "%kernel.project_dir%/backups"
+                # backup_directory: ~ # The current directory will be used if no value is passed
 ```
 
 ### Drivers
@@ -52,10 +57,10 @@ symandy_database_backup:
 Only the `mysql` driver is currently available.
 
 ## Usage
-Once the connections are configured, you only have to run the following command to generate the dumped databases files:
+Once the backups are configured, you only have to run the following command to generate the dumped databases backup files:
 
 ```shell
 php bin/console symandy:databases:backup
 ```
 
-It will generate one file by connection in the format `<connection_name>-<current_year>-<current_month>-<current_day>.sql`.
+It will generate one file by database in the format `<backup_name>-<database>-<current_year>-<current_month>-<current_day>.sql`.

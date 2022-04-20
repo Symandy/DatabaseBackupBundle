@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symandy\DatabaseBackupBundle\Command;
 
 use DateTime;
+use RuntimeException;
 use Symandy\DatabaseBackupBundle\Model\Backup\Backup;
 use Symandy\DatabaseBackupBundle\Model\Connection\MySQLConnection;
 use Symandy\DatabaseBackupBundle\Registry\Backup\BackupRegistry;
@@ -14,8 +15,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
+use function Symfony\Component\String\u;
 
 #[AsCommand(
     name: 'symandy:databases:backup',
@@ -24,9 +29,15 @@ use Symfony\Component\Process\Process;
 final class BackupDatabasesCommand extends Command
 {
 
+    private Filesystem $filesystem;
+
+    private Finder $finder;
+
     public function __construct(private readonly BackupRegistry $backupRegistry)
     {
         parent::__construct();
+        $this->filesystem = new Filesystem();
+        $this->finder = new Finder();
     }
 
     protected function configure(): void
@@ -56,7 +67,7 @@ final class BackupDatabasesCommand extends Command
             }
 
             $backupsToExecute[] = $this->backupRegistry->get($backup);
-         }
+        }
 
         if ([] === $backups) {
             $backupsToExecute = $this->backupRegistry->all();
@@ -74,32 +85,98 @@ final class BackupDatabasesCommand extends Command
         foreach ($backupsToExecute as $backup) {
             /** @var MySQLConnection $connection */
             $connection = $backup->getConnection();
+            $backupName = $backup->getName();
 
-            $dumpSqlCommand = sprintf(
-                '%s -u "${:DB_USER}" -h "${:DB_HOST}" -P "${:DB_PORT}" --databases %s > "${:FILENAME}".sql',
-                $mysqldump,
-                implode(' ', $connection->getDatabases()),
-            );
+            if ([] === $connection->getDatabases()) {
+                $io->warning(sprintf("No database to backup in %s configuration, Skipping", $backupName));
 
-            $io->info(sprintf("The backup %s is in progress", $backup->getName()));
-
-            $process = Process::fromShellCommandline($dumpSqlCommand);
-            $process->setPty(Process::isPtySupported());
-            $process->run(null, [
-                'DB_USER' => $connection->getUser(),
-                'DB_HOST' => $connection->getHost(),
-                'DB_PORT' => $connection->getPort(),
-                'MYSQL_PWD' => $connection->getPassword(),
-                'FILENAME' => sprintf('%s-%s', $backup->getName(), (new DateTime())->format('Y-m-d'))
-            ]);
-
-            if (!$process->isSuccessful()) {
-                $io->error($process->getErrorOutput());
-
-                return Command::FAILURE;
+                continue;
             }
 
-            $io->success(sprintf('Backup %s has been successfully completed', $backup->getName()));
+            if (null !== ($backupDirectory = $backup->getStrategy()->getBackupDirectory())) {
+                if (!$this->filesystem->exists($backupDirectory)) {
+                    $io->error("Backup directory \"$backupDirectory\" does not exist");
+
+                    return Command::INVALID;
+                }
+            }
+
+            $backupDirectory ??= false !== getcwd() ?
+                getcwd() :
+                throw new RuntimeException('Unable to get the current directory, check the user permissions')
+            ;
+
+            $io->info(sprintf("The backup %s is in progress", $backupName));
+
+            foreach ($connection->getDatabases() as $database) {
+                if ($output->isVerbose()) {
+                    $io->comment("Backup for $database database has started");
+                }
+
+                $date = (new DateTime())->format('Y-m-d');
+                $filePath = "$backupDirectory/$backupName-$database-$date.sql";
+
+                $process = Process::fromShellCommandline(
+                    '"${:MYSQL_DUMP}" -u "${:DB_USER}" -h "${:DB_HOST}" -P "${:DB_PORT}" "${:DB_NAME}" > "${:FILEPATH}"'
+                );
+
+                $process->setPty(Process::isPtySupported());
+                $process->run(null, [
+                    'MYSQL_DUMP' => $mysqldump,
+                    'DB_USER' => $connection->getUser(),
+                    'DB_HOST' => $connection->getHost(),
+                    'DB_PORT' => $connection->getPort(),
+                    'DB_NAME' => $database,
+                    'MYSQL_PWD' => $connection->getPassword(),
+                    'FILEPATH' => $filePath
+                ]);
+
+                if (!$process->isSuccessful()) {
+                    $message = '' !== $process->getErrorOutput() ? $process->getErrorOutput() : $process->getOutput();
+
+                    $io->error(u($message)->collapseWhitespace()->toString());
+
+                    return Command::FAILURE;
+                }
+
+                $finder = $this->finder
+                    ->in($backupDirectory)
+                    ->name(["$backupName-$database-*.sql"])
+                    ->sortByModifiedTime()
+                    ->depth(['== 0'])
+                    ->files()
+                ;
+                $filesCount = $finder->count();
+
+                /** @var array<int, SplFileInfo> $ */
+                $files = iterator_to_array($finder);
+
+                $maxFiles = $backup->getStrategy()->getMaxFiles();
+
+                if (null !== $maxFiles && $filesCount > $maxFiles) {
+                    $filesToDeleteCount = $filesCount - $maxFiles;
+                    array_splice($files, $filesToDeleteCount);
+
+                    if (1 === $filesToDeleteCount) {
+                       $io->warning('Reached the max backup files limit, removing the oldest one');
+                    } else {
+                        $io->warning(sprintf(
+                            'Reached the max backup files limit, removing the %d oldest ones',
+                            $filesToDeleteCount
+                        ));
+                    }
+
+                    foreach ($files as $file) {
+                        if ($output->isVerbose()) {
+                            $io->comment(sprintf('Deleting "%s"', $file->getRealPath()));
+                        }
+
+                        $this->filesystem->remove($file->getRealPath());
+                    }
+                }
+            }
+
+            $io->success(sprintf('Backup %s has been successfully completed', $backupName));
         }
 
         return Command::SUCCESS;
