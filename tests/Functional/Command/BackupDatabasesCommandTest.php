@@ -74,6 +74,15 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
         }
 
         $filesystem = new Filesystem();
+        $filesystem->touch(
+            [self::$kernel->getProjectDir() . '/backups/other-backup-db_test_1-2022-04-01.sql'],
+            (new DateTime('2022-03-01'))->getTimestamp()
+        );
+        $filesystem->touch(
+            [self::$kernel->getProjectDir() . '/backups/other-backup-main-db_test_1-2022-04-01.sql'],
+            (new DateTime('2022-03-01'))->getTimestamp()
+        );
+
         foreach (range(1, 10) as $day) {
             $date = new DateTime("2022-04-$day");
             $formattedDay = str_pad((string) $day, 2, '0', STR_PAD_LEFT);
@@ -94,13 +103,21 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
             ->depth('== 0')
             ->name(['main-db_test_1-*.sql'])
             ->files()
-            ->name('*.sql')
+        ;
+        $otherBackupFilesFinder = (new Finder())
+            ->in([self::$kernel->getProjectDir() . '/backups'])
+            ->depth('== 0')
+            ->name(['other-backup-db_test_1-*.sql'])
+            ->name(['other-backup-main-db_test_1-*.sql'])
+            ->files()
         ;
 
         self::assertEquals(5, $backupFilesFinder->count());
+        self::assertEquals(2, $otherBackupFilesFinder->count());
         $formattedTodayDate = (new DateTime())->format('Y-m-d');
 
         $backupFiles = iterator_to_array($backupFilesFinder);
+        $otherBackupFiles = iterator_to_array($otherBackupFilesFinder);
         $filePathPrefix = self::$kernel->getProjectDir() . '/backups/main-db_test_1';
 
         self::assertArrayNotHasKey("$filePathPrefix-2022-04-01.sql", $backupFiles);
@@ -114,6 +131,14 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
         self::assertArrayHasKey("$filePathPrefix-2022-04-09.sql", $backupFiles);
         self::assertArrayHasKey("$filePathPrefix-2022-04-10.sql", $backupFiles);
         self::assertArrayHasKey("$filePathPrefix-$formattedTodayDate.sql", $backupFiles);
+        self::assertArrayHasKey(
+            self::$kernel->getProjectDir() . '/backups/other-backup-db_test_1-2022-04-01.sql',
+            $otherBackupFiles
+        );
+        self::assertArrayHasKey(
+            self::$kernel->getProjectDir() . '/backups/other-backup-main-db_test_1-2022-04-01.sql',
+            $otherBackupFiles
+        );
     }
 
     /**
