@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace Symandy\DatabaseBackupBundle\Command;
 
 use DateTime;
-use Symandy\DatabaseBackupBundle\Model\MySQLConnection;
-use Symandy\DatabaseBackupBundle\Registry\ConnectionRegistryInterface;
+use RuntimeException;
+use Symandy\DatabaseBackupBundle\Model\Backup\Backup;
+use Symandy\DatabaseBackupBundle\Model\Connection\MySQLConnection;
+use Symandy\DatabaseBackupBundle\Registry\Backup\BackupRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
+use function Symfony\Component\String\u;
 
 #[AsCommand(
     name: 'symandy:databases:backup',
@@ -23,18 +29,24 @@ use Symfony\Component\Process\Process;
 final class BackupDatabasesCommand extends Command
 {
 
-    public function __construct(private ConnectionRegistryInterface $connectionRegistry)
+    private Filesystem $filesystem;
+
+    private Finder $finder;
+
+    public function __construct(private readonly BackupRegistry $backupRegistry)
     {
         parent::__construct();
+        $this->filesystem = new Filesystem();
+        $this->finder = new Finder();
     }
 
     protected function configure(): void
     {
         $this
             ->addArgument(
-                'connections',
+                'backups',
                 InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
-                'The configured database connections to export'
+                'The name of the backups to be performed'
             )
         ;
     }
@@ -43,53 +55,128 @@ final class BackupDatabasesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        /** @var array<int, string> $connections */
-        $connections = $input->getArgument('connections');
-        $connectionsToExport = [];
+        /** @var array<int, string> $backups */
+        $backups = $input->getArgument('backups');
+        $backupsToExecute = [];
 
-        foreach ($connections as $connection) {
-            if (!$this->connectionRegistry->has($connection)) {
-                $io->error("Connection $connection does not exist");
+        foreach ($backups as $backup) {
+            if (!$this->backupRegistry->has($backup)) {
+                $io->error("Backup $backup does not exist in registry");
 
                 return Command::FAILURE;
             }
 
-            $connectionsToExport[] = $this->connectionRegistry->get($connection);
+            $backupsToExecute[] = $this->backupRegistry->get($backup);
         }
 
-        if ([] === $connections) {
-            $connectionsToExport = $this->connectionRegistry->all();
+        if ([] === $backups) {
+            $backupsToExecute = $this->backupRegistry->all();
+        }
+
+        if ([] === $backupsToExecute) {
+            $io->warning('No backup to be done');
+
+            return Command::SUCCESS;
         }
 
         $mysqldump = (new ExecutableFinder())->find('mysqldump');
 
-        /** @var MySQLConnection $connection */
-        foreach ($connectionsToExport as $connection) {
-            $dumpSqlCommand = sprintf(
-                '%s -u "${:DB_USER}" -h "${:DB_HOST}" -P "${:DB_PORT}" --databases %s > "${:FILENAME}".sql',
-                $mysqldump,
-                implode(' ', $connection->getDatabases()),
-            );
+        /** @var Backup $backup */
+        foreach ($backupsToExecute as $backup) {
+            /** @var MySQLConnection $connection */
+            $connection = $backup->getConnection();
+            $backupName = $backup->getName();
 
-            $io->info(sprintf("Start exporting databases for %s connection", $connection->getName()));
+            if ([] === $connection->getDatabases()) {
+                $io->warning(sprintf("No database to backup in %s configuration, Skipping", $backupName));
 
-            $process = Process::fromShellCommandline($dumpSqlCommand);
-            $process->setPty(Process::isPtySupported());
-            $process->run(null, [
-                'DB_USER' => $connection->getUser(),
-                'DB_HOST' => $connection->getHost(),
-                'DB_PORT' => $connection->getPort(),
-                'MYSQL_PWD' => $connection->getPassword(),
-                'FILENAME' => sprintf('%s-%s', $connection->getName(), (new DateTime())->format('Y-m-d'))
-            ]);
-
-            if (!$process->isSuccessful()) {
-                $io->error($process->getErrorOutput());
-
-                return Command::FAILURE;
+                continue;
             }
 
-            $io->success(sprintf('Connection %s have been exported', $connection->getName()));
+            if (null !== ($backupDirectory = $backup->getStrategy()->getBackupDirectory())) {
+                if (!$this->filesystem->exists($backupDirectory)) {
+                    $io->error("Backup directory \"$backupDirectory\" does not exist");
+
+                    return Command::INVALID;
+                }
+            }
+
+            $backupDirectory ??= false !== getcwd() ?
+                getcwd() :
+                throw new RuntimeException('Unable to get the current directory, check the user permissions')
+            ;
+
+            $io->info(sprintf("The backup %s is in progress", $backupName));
+
+            foreach ($connection->getDatabases() as $database) {
+                if ($output->isVerbose()) {
+                    $io->comment("Backup for $database database has started");
+                }
+
+                $date = (new DateTime())->format('Y-m-d');
+                $filePath = "$backupDirectory/$backupName-$database-$date.sql";
+
+                $process = Process::fromShellCommandline(
+                    '"${:MYSQL_DUMP}" -u "${:DB_USER}" -h "${:DB_HOST}" -P "${:DB_PORT}" "${:DB_NAME}" > "${:FILEPATH}"'
+                );
+
+                $process->setPty(Process::isPtySupported());
+                $process->run(null, [
+                    'MYSQL_DUMP' => $mysqldump,
+                    'DB_USER' => $connection->getUser(),
+                    'DB_HOST' => $connection->getHost(),
+                    'DB_PORT' => $connection->getPort(),
+                    'DB_NAME' => $database,
+                    'MYSQL_PWD' => $connection->getPassword(),
+                    'FILEPATH' => $filePath
+                ]);
+
+                if (!$process->isSuccessful()) {
+                    $message = '' !== $process->getErrorOutput() ? $process->getErrorOutput() : $process->getOutput();
+
+                    $io->error(u($message)->collapseWhitespace()->toString());
+
+                    return Command::FAILURE;
+                }
+
+                $finder = $this->finder
+                    ->in($backupDirectory)
+                    ->name(["$backupName-$database-*.sql"])
+                    ->sortByModifiedTime()
+                    ->depth(['== 0'])
+                    ->files()
+                ;
+                $filesCount = $finder->count();
+
+                /** @var array<int, SplFileInfo> $ */
+                $files = iterator_to_array($finder);
+
+                $maxFiles = $backup->getStrategy()->getMaxFiles();
+
+                if (null !== $maxFiles && $filesCount > $maxFiles) {
+                    $filesToDeleteCount = $filesCount - $maxFiles;
+                    array_splice($files, $filesToDeleteCount);
+
+                    if (1 === $filesToDeleteCount) {
+                       $io->warning('Reached the max backup files limit, removing the oldest one');
+                    } else {
+                        $io->warning(sprintf(
+                            'Reached the max backup files limit, removing the %d oldest ones',
+                            $filesToDeleteCount
+                        ));
+                    }
+
+                    foreach ($files as $file) {
+                        if ($output->isVerbose()) {
+                            $io->comment(sprintf('Deleting "%s"', $file->getRealPath()));
+                        }
+
+                        $this->filesystem->remove($file->getRealPath());
+                    }
+                }
+            }
+
+            $io->success(sprintf('Backup %s has been successfully completed', $backupName));
         }
 
         return Command::SUCCESS;

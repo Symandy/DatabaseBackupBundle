@@ -9,11 +9,26 @@
         <defaults public="false" autowire="false"/>
 
         <service id="Symandy\DatabaseBackupBundle\Command\BackupDatabasesCommand">
-            <argument type="service" key="$connectionRegistry" id="symandy_database_backup.registry.connection_registry"/>
+            <argument type="service" key="$backupRegistry" id="symandy_database_backup.registry.backup_registry"/>
             <tag>console.command</tag>
         </service>
 
-        <service id="symandy_database_backup.registry.connection_registry" class="Symandy\DatabaseBackupBundle\Registry\ConnectionRegistry"/>
-        <service id="Symandy\DatabaseBackupBundle\Registry\ConnectionRegistryInterface" alias="symandy_database_backup.registry.connection_registry"/>
+        <service id="symandy_database_backup.factory.connection" class="Symandy\DatabaseBackupBundle\Factory\Connection\ConnectionFactory"/>
+        <service id="Symandy\DatabaseBackupBundle\Factory\Connection\ConnectionFactory" alias="symandy_database_backup.factory.connection"/>
+
+        <service id="symandy_database_backup.factory.strategy" class="Symandy\DatabaseBackupBundle\Factory\Factory">
+            <argument type="string" key="$className">Symandy\DatabaseBackupBundle\Model\Backup\Strategy</argument>
+        </service>
+
+        <service id="symandy_database_backup.factory.backup" class="Symandy\DatabaseBackupBundle\Factory\Backup\BackupFactory">
+            <argument type="service" key="$connectionFactory" id="symandy_database_backup.factory.connection"/>
+            <argument type="service" key="$strategyFactory" id="symandy_database_backup.factory.strategy"/>
+        </service>
+        <service id="Symandy\DatabaseBackupBundle\Factory\Backup\BackupFactory" alias="symandy_database_backup.factory.backup"/>
+
+        <service id="symandy_database_backup.registry.backup_registry" class="Symandy\DatabaseBackupBundle\Registry\Backup\BackupRegistry">
+            <argument type="service" key="$backupFactory" id="symandy_database_backup.factory.backup"/>
+        </service>
+        <service id="Symandy\DatabaseBackupBundle\Registry\Backup\BackupRegistry" alias="symandy_database_backup.registry.backup_registry"/>
     </services>
 </container>

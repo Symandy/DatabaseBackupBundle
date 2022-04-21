@@ -6,9 +6,15 @@ parameters:
         - tests/Unit
     ignoreErrors:
         # src
-        - '#PHPDoc tag @var for variable \$connections has no value type specified in iterable type array.#'
         - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::fixXmlConfig\(\).#'
         - '#Symandy\\DatabaseBackupBundle\\DependencyInjection\\SymandyDatabaseBackupExtension::loadInternal\(\) has parameter \$mergedConfig with no value type specified in iterable type array.#'
+        - '#Method Symandy\\DatabaseBackupBundle\\Registry\\Backup\\BackupRegistry::registerFromNameAndOptions\(\) has parameter \$options with no value type specified in iterable type array.#'
+        - '#Method Symandy\\DatabaseBackupBundle\\Registry\\Backup\\BackupRegistryInterface::registerFromNameAndOptions\(\) has parameter \$options with no value type specified in iterable type array.#'
+        - '#Method Symandy\\DatabaseBackupBundle\\Factory\\FactoryInterface::create\(\) has parameter \$options with no value type specified in iterable type array.#'
+        - '#Method Symandy\\DatabaseBackupBundle\\Factory\\NamedFactoryInterface::createNamed\(\) has parameter \$options with no value type specified in iterable type array.#'
+        - '#Method Symandy\\DatabaseBackupBundle\\Factory\\Factory::create\(\) has parameter \$options with no value type specified in iterable type array.#'
+        - '#Method Symandy\\DatabaseBackupBundle\\Factory\\Backup\\BackupFactory::createNamed\(\) has parameter \$options with no value type specified in iterable type array.#'
+        - '#Method Symandy\\DatabaseBackupBundle\\Factory\\Connection\\ConnectionFactory::create\(\) has parameter \$options with no value type specified in iterable type array.#'
 
         # tests
         - '#Method Symandy\\Tests\\DatabaseBackupBundle\\Functional\\Command\\BackupDatabasesCommandTest::getConnectionOptions\(\) return type has no value type specified in iterable type array.#'

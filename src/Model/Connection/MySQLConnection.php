@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Symandy\DatabaseBackupBundle\Model;
+namespace Symandy\DatabaseBackupBundle\Model\Connection;
 
 final class MySQLConnection implements Connection
 {
@@ -11,18 +11,12 @@ final class MySQLConnection implements Connection
      * @param array<int, string> $databases
      */
     public function __construct(
-        private readonly string $name,
         private readonly ?string $user = null,
         private readonly ?string $password = null,
         private readonly ?string $host = '127.0.0.1',
         private readonly ?int $port = 3306,
         private readonly array $databases = []
     ) {
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
     }
 
     public function getUser(): ?string
