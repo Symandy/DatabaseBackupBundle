@@ -8,6 +8,8 @@ use Symandy\DatabaseBackupBundle\Model\Connection\ConnectionDriver;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+use function interface_exists;
+
 final class Configuration implements ConfigurationInterface
 {
 
@@ -22,9 +24,21 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('backups')
                     ->useAttributeAsKey('name')
                     ->arrayPrototype()
+                        ->validate()
+                            ->ifTrue(fn (array $v): bool => $v['use_doctrine_url'] && isset($v['connection']))
+                            ->thenInvalid('Cannot set "use_doctrine_url" and "connection" for the same configuration')
+                        ->end()
+                        ->validate()
+                            ->ifTrue(fn (array $v): bool => !$v['use_doctrine_url'] && !isset($v['connection']))
+                            ->thenInvalid('You should configure the "connection" node if "use_doctrine_bundle" is set to false')
+                        ->end()
+                        ->validate()
+                            ->ifTrue(fn (array $v): bool => $v['use_doctrine_url'] && !interface_exists('Doctrine\DBAL\Driver'))
+                            ->thenInvalid('Cannot set "use_doctrine_url" to "true" without "doctrine/dbal". You should install the package with "composer require doctrine/dbal"')
+                        ->end()
                         ->children()
+                            ->booleanNode('use_doctrine_url')->defaultFalse()->end()
                             ->arrayNode('connection')
-                                ->isRequired()
                                 ->children()
                                     ->variableNode('driver')
                                         ->isRequired()
