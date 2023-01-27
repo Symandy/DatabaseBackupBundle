@@ -26,7 +26,8 @@
         "symfony/config": "^6.0",
         "symfony/process": "^6.0",
         "symfony/serializer": "^6.0",
-        "symfony/property-access": "^6.0"
+        "symfony/property-access": "^6.0",
+        "nyholm/dsn": "^2.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^1.5",
