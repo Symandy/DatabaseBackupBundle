@@ -67,8 +67,9 @@ final class ConfigurationTest extends TestCase
             'backups' => [
                 'test' => [
                     'connection' => [
-                        'driver' => 'mysql'
-                    ]
+                        'driver' => 'mysql',
+                        'configuration' => [],
+                    ],
                 ]
             ]
         ]]);
@@ -79,7 +80,8 @@ final class ConfigurationTest extends TestCase
             'backups' => [
                 'test' => [
                     'connection' => [
-                        'driver' => ConnectionDriver::MySQL
+                        'driver' => ConnectionDriver::MySQL,
+                        'configuration' => [],
                     ]
                 ]
             ]
