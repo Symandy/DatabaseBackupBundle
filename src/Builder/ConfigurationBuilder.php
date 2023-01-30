@@ -13,7 +13,7 @@ use function substr;
 final class ConfigurationBuilder
 {
     /**
-     * @return array{driver: ConnectionDriver, configuration: array{host: string|null, port: int|null, user: string|null, password: string|null, databases: array<string>}}
+     * @return array{driver: ConnectionDriver, configuration: array{host?: string, port?: int, user: string|null, password: string|null, databases: array<non-empty-string>}}
      */
     public static function buildFromUrl(string $url): array
     {
@@ -29,19 +29,27 @@ final class ConfigurationBuilder
             throw new InvalidArgumentException("Driver $scheme is not supported")
         ;
 
-        if (null === $path = $urlParsing->getPath()) {
+        if ((null === $path = $urlParsing->getPath()) || '' === substr($path, 1)) {
             throw new InvalidArgumentException('Database could not be parsed');
+        }
+
+        $configuration = [
+            'user' => $urlParsing->getUser(),
+            'password' => $urlParsing->getPassword(),
+            'databases' => [substr($path, 1)],
+        ];
+
+        if (null !== $urlParsing->getHost()) {
+            $configuration['host'] = $urlParsing->getHost();
+        }
+
+        if (null !== $urlParsing->getPort()) {
+            $configuration['port'] = $urlParsing->getPort();
         }
 
         return [
             'driver' => $driver,
-            'configuration' => [
-                'host' => $urlParsing->getHost(),
-                'port' => $urlParsing->getPort(),
-                'user' => $urlParsing->getUser(),
-                'password' => $urlParsing->getPassword(),
-                'databases' => [substr($path, 1)],
-            ]
+            'configuration' => $configuration
         ];
     }
 }

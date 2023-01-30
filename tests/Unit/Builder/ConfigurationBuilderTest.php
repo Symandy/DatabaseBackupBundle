@@ -33,12 +33,20 @@ final class ConfigurationBuilderTest extends TestCase
         ConfigurationBuilder::buildFromUrl('test://user@host');
     }
 
-    public function testInvalidPath(): void
+    public function testNullPath(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Database could not be parsed');
 
         ConfigurationBuilder::buildFromUrl('mysql://user@host');
+    }
+
+    public function testInvalidPath(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Database could not be parsed');
+
+        ConfigurationBuilder::buildFromUrl('mysql://user@host/');
     }
 
     /**
@@ -50,11 +58,11 @@ final class ConfigurationBuilderTest extends TestCase
             'expected' => [
                 'driver' => ConnectionDriver::MySQL,
                 'configuration' => [
-                    'host' => 'host',
-                    'port' => 9999,
                     'user' => 'user',
                     'password' => 'password',
-                    'databases' => ['db_name']
+                    'databases' => ['db_name'],
+                    'host' => 'host',
+                    'port' => 9999,
                 ]
             ],
             'url' => 'mysql://user:password@host:9999/db_name?additionalParameter=test'
@@ -64,8 +72,6 @@ final class ConfigurationBuilderTest extends TestCase
             'expected' => [
                 'driver' => ConnectionDriver::MySQL,
                 'configuration' => [
-                    'host' => null,
-                    'port' => null,
                     'user' => null,
                     'password' => null,
                     'databases' => ['db_name']
