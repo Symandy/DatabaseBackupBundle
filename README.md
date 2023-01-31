@@ -36,7 +36,7 @@ If the only purpose is to back up the database of the current project, use the b
 ```yaml
 symandy_database_backup:
     backups:
-        bar:
+        app:
             connection:
                 url: "%env(DATABASE_URL)%"
             strategy:
