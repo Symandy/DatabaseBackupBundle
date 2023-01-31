@@ -93,12 +93,28 @@ final class ConfigurationTest extends TestCase
     public function testInvalidOptions(): void
     {
         $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Unrecognized option "unknown_parameter" under "symandy_database_backup.backups.test.connection".');
 
         $this->processConfiguration([[
             'backups' => [
                 'test' => [
                     'connection' => [
                         'driver' => 'mysql', 'unknown-parameter' => 'test'
+                    ]
+                ]
+            ]
+        ]]);
+    }
+
+    public function testEmptyConnection(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('"url" or "driver" and "configuration" combination should be defined');
+
+        $this->processConfiguration([[
+            'backups' => [
+                'test' => [
+                    'connection' => [
                     ]
                 ]
             ]
@@ -119,6 +135,11 @@ final class ConfigurationTest extends TestCase
                             'port' => 0000,
                             'databases' => ['db-1', 'db-2']
                         ]
+                    ]
+                ],
+                'test2' => [
+                    'connection' => [
+                        'url' => 'url://host:9999'
                     ]
                 ]
             ]
@@ -148,6 +169,10 @@ final class ConfigurationTest extends TestCase
         self::assertContainsEquals('db-1', $connectionConfiguration['databases']);
         self::assertContainsEquals('db-2', $connectionConfiguration['databases']);
         self::assertNotContainsEquals('db-3', $connectionConfiguration['databases']);
+
+        self::assertEquals('url://host:9999', $configuration['backups']['test2']['connection']['url']);
+        self::assertNotContains('configuration', $configuration['backups']['test2']['connection']);
+        self::assertNotContains('driver', $configuration['backups']['test2']['connection']);
     }
 
     private function processConfiguration(array $configs = []): array
