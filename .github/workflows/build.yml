@@ -56,4 +56,5 @@ jobs:
                     TEST_DATABASE_USER: root
                     TEST_DATABASE_PASSWORD: symandy
                     TEST_DATABASE_PORT: ${{ job.services.mysql.ports['3306'] }}
+                    TEST_DATABASE_URL: mysql://root:symandy@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/db_test_1
                 run: composer run-script test

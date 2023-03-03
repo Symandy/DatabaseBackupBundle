@@ -5,43 +5,71 @@ declare(strict_types=1);
 namespace Symandy\Tests\DatabaseBackupBundle\Functional\Command;
 
 use DateTime;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Tools\DsnParser;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
-use Doctrine\ORM\Tools\Setup;
-use Doctrine\ORM\Tools\ToolsException;
+use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
+use Doctrine\ORM\ORMSetup;
 use Symandy\Tests\DatabaseBackupBundle\Functional\AbstractFunctionalTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Webmozart\Assert\Assert;
 
 final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
 {
-
     /**
-     * @throws ORMException
      * @throws DBALException
-     * @throws ToolsException
+     * @throws MissingMappingDriverImplementation
      */
     protected function setUp(): void
     {
-        $entityManager = $this->getEntityManager();
+        $this->restoreDatabaseWithParams();
+        $this->restoreDatabaseWithUrl();
 
+        $filesystem = new Filesystem();
+        if (!$filesystem->exists([self::$kernel->getProjectDir() . '/backups'])) {
+            $filesystem->mkdir([self::$kernel->getProjectDir() . '/backups']);
+        }
+    }
+
+    /**
+     * @throws DBALException
+     * @throws MissingMappingDriverImplementation
+     */
+    private function restoreDatabaseWithParams(): void
+    {
+        $entityManager = $this->getEntityManager();
         $schemaManager = $entityManager->getConnection()->createSchemaManager();
-        $options = $this->getConnectionOptions(true);
+
+        $options = $this->getConnectionOptions(withDbName: true);
 
         if (in_array($options['dbname'], $schemaManager->listDatabases())) {
             $schemaManager->dropDatabase($options['dbname']);
         }
 
         $schemaManager->createDatabase($options['dbname']);
+    }
 
-        $filesystem = new Filesystem();
-        if (!$filesystem->exists([self::$kernel->getProjectDir() . '/backups'])) {
-            $filesystem->mkdir([self::$kernel->getProjectDir() . '/backups']);
+    /**
+     * @throws DBALException
+     * @throws MissingMappingDriverImplementation
+     */
+    private function restoreDatabaseWithUrl(): void
+    {
+        $entityManager = $this->getEntityManager();
+        $schemaManager = $entityManager->getConnection()->createSchemaManager();
+
+        $options = $this->getConnectionOptions(withUrl: true, withDbName: true);
+
+        if (in_array($options['dbname'], $schemaManager->listDatabases())) {
+            $schemaManager->dropDatabase($options['dbname']);
         }
+
+        $schemaManager->createDatabase($options['dbname']);
     }
 
     public function testBackupCommand(): void
@@ -61,7 +89,6 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
             ->depth('== 0')
             ->name(['main-db_test_1-*.sql'])
             ->files()
-            ->name('*.sql')
         ;
 
         self::assertEquals(1, $backupFiles->count());
@@ -143,18 +170,12 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
 
     /**
      * @throws DBALException
-     * @throws ORMException
+     * @throws MissingMappingDriverImplementation
      */
     protected function tearDown(): void
     {
-        $entityManager = $this->getEntityManager();
-
-        $schemaManager = $entityManager->getConnection()->createSchemaManager();
-        $options = $this->getConnectionOptions(true);
-
-        if (in_array($options['dbname'], $schemaManager->listDatabases())) {
-            $schemaManager->dropDatabase($options['dbname']);
-        }
+        $this->restoreDatabaseWithParams();
+        $this->restoreDatabaseWithUrl();
 
         $backupFiles = (new Finder())
             ->in([self::$kernel->getProjectDir() . '/backups'])
@@ -166,9 +187,18 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
         (new Filesystem())->remove($backupFiles);
     }
 
-    private function getConnectionOptions(bool $withDbName = false): array
+    private function getConnectionOptions(bool $withUrl = false, bool $withDbName = false): array
     {
         $container = self::getContainer();
+
+        if ($withUrl) {
+            $databaseUrl = $container->getParameter('test.database_url');
+            Assert::string($databaseUrl);
+
+            $dsnParser = new DsnParser(['mysql' => 'mysqli']);
+
+            return $dsnParser->parse($databaseUrl);
+        }
 
         $baseParams = [
             'driver' => 'pdo_mysql',
@@ -186,16 +216,16 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
     }
 
     /**
-     * @throws ORMException
+     * @throws DBALException
+     * @throws MissingMappingDriverImplementation
      */
     private function getEntityManager(): EntityManagerInterface
     {
         $paths = [__DIR__ . '/../../app/src/Entity'];
         $connectionOptions = $this->getConnectionOptions();
 
-        $config = Setup::createAttributeMetadataConfiguration($paths);
+        $config = ORMSetup::createAttributeMetadataConfiguration($paths);
 
-        return EntityManager::create($connectionOptions, $config);
+        return new EntityManager(DriverManager::getConnection($connectionOptions), $config);
     }
-
 }

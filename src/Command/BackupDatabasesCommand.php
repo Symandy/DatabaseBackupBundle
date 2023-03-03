@@ -20,6 +20,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
+
 use function Symfony\Component\String\u;
 
 #[AsCommand(
@@ -31,13 +32,10 @@ final class BackupDatabasesCommand extends Command
 
     private Filesystem $filesystem;
 
-    private Finder $finder;
-
     public function __construct(private readonly BackupRegistry $backupRegistry)
     {
         parent::__construct();
         $this->filesystem = new Filesystem();
-        $this->finder = new Finder();
     }
 
     protected function configure(): void
@@ -139,16 +137,17 @@ final class BackupDatabasesCommand extends Command
                     return Command::FAILURE;
                 }
 
-                $finder = $this->finder
+                $finder = (new Finder())
                     ->in($backupDirectory)
                     ->name(["$backupName-$database-*.sql"])
                     ->sortByModifiedTime()
                     ->depth(['== 0'])
                     ->files()
                 ;
+
                 $filesCount = $finder->count();
 
-                /** @var array<int, SplFileInfo> $ */
+                /** @var array<int, SplFileInfo> $files */
                 $files = iterator_to_array($finder);
 
                 $maxFiles = $backup->getStrategy()->getMaxFiles();
