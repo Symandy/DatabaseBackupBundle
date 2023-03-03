@@ -19,6 +19,8 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Webmozart\Assert\Assert;
 
+use function iterator_to_array;
+
 final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
 {
     /**
@@ -103,11 +105,19 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
         $filesystem = new Filesystem();
         $filesystem->touch(
             [self::$kernel->getProjectDir() . '/backups/other-backup-db_test_1-2022-04-01.sql'],
-            (new DateTime('2022-03-01'))->getTimestamp()
+            (new DateTime('2022-03-01'))->getTimestamp(),
         );
         $filesystem->touch(
             [self::$kernel->getProjectDir() . '/backups/other-backup-main-db_test_1-2022-04-01.sql'],
-            (new DateTime('2022-03-01'))->getTimestamp()
+            (new DateTime('2022-03-01'))->getTimestamp(),
+        );
+        $filesystem->touch(
+            [self::$kernel->getProjectDir() . '/backups/secondary-db_test_2-2023-01-01.sql'],
+            (new DateTime('2023-01-01'))->getTimestamp(),
+        );
+        $filesystem->touch(
+            [self::$kernel->getProjectDir() . '/backups/secondary-db_test_2-2023-01-02.sql'],
+            (new DateTime('2023-01-02'))->getTimestamp(),
         );
 
         foreach (range(1, 10) as $day) {
@@ -166,6 +176,20 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
             self::$kernel->getProjectDir() . '/backups/other-backup-main-db_test_1-2022-04-01.sql',
             $otherBackupFiles
         );
+
+        // Secondary backup is configured with full database url
+        $secondaryBackupFilesFinder = (new Finder())
+            ->in([self::$kernel->getProjectDir() . '/backups'])
+            ->depth('== 0')
+            ->name(['secondary-db_test_2-*.sql'])
+        ;
+        $secondaryBackupFiles = iterator_to_array($secondaryBackupFilesFinder);
+        $filePathPrefix = self::$kernel->getProjectDir() . '/backups/secondary-db_test_2';
+
+        self::assertCount(2, $secondaryBackupFilesFinder); // Backup strategy is configured with `max_files: 2`
+        self::assertArrayNotHasKey("$filePathPrefix-2023-01-01.sql", $secondaryBackupFiles);
+        self::assertArrayHasKey("$filePathPrefix-2023-01-02.sql", $secondaryBackupFiles);
+        self::assertArrayHasKey("$filePathPrefix-$formattedTodayDate.sql", $secondaryBackupFiles);
     }
 
     /**
