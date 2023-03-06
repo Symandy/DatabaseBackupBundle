@@ -34,7 +34,7 @@ jobs:
                 with:
                     php-version: ${{ matrix.php-version }}
 
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v3
 
             -   name: Install Dependencies
                 run: composer update -q --no-ansi --no-interaction --no-progress
