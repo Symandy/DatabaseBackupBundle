@@ -105,11 +105,11 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
         $filesystem = new Filesystem();
         $filesystem->touch(
             [self::$kernel->getProjectDir() . '/backups/other-backup-db_test_1-2022-04-01.sql'],
-            (new DateTime('2022-03-01'))->getTimestamp(),
+            (new DateTime('2022-04-01'))->getTimestamp(),
         );
         $filesystem->touch(
             [self::$kernel->getProjectDir() . '/backups/other-backup-main-db_test_1-2022-04-01.sql'],
-            (new DateTime('2022-03-01'))->getTimestamp(),
+            (new DateTime('2022-04-01'))->getTimestamp(),
         );
         $filesystem->touch(
             [self::$kernel->getProjectDir() . '/backups/secondary-db_test_2-2023-01-01.sql'],
