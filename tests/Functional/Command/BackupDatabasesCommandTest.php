@@ -83,9 +83,7 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
 
     public function testBackupCommand(): void
     {
-        if (!self::$booted) {
-            self::bootKernel();
-        }
+        self::bootKernel();
 
         $application = new Application(self::$kernel);
         $command = $application->find('symandy:databases:backup');
@@ -96,18 +94,16 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
         $backupFiles = (new Finder())
             ->in([self::$kernel->getProjectDir() . '/backups'])
             ->depth('== 0')
-            ->name(['main-db_test_1-*.sql'])
+            ->name(['*.sql'])
             ->files()
         ;
 
-        self::assertEquals(1, $backupFiles->count());
+        self::assertEquals(2, $backupFiles->count()); // One file by configuration (by url and by params)
     }
 
     public function testBackupCommandMaxFiles(): void
     {
-        if (!self::$booted) {
-            self::bootKernel();
-        }
+        self::bootKernel();
 
         $filesystem = new Filesystem();
         $filesystem->touch(
