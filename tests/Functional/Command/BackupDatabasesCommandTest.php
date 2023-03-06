@@ -20,6 +20,10 @@ use Symfony\Component\Finder\Finder;
 use Webmozart\Assert\Assert;
 
 use function iterator_to_array;
+use function range;
+use function str_pad;
+
+use const STR_PAD_LEFT;
 
 final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
 {
@@ -111,14 +115,6 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
             [self::$kernel->getProjectDir() . '/backups/other-backup-main-db_test_1-2022-04-01.sql'],
             (new DateTime('2022-04-01'))->getTimestamp(),
         );
-        $filesystem->touch(
-            [self::$kernel->getProjectDir() . '/backups/secondary-db_test_2-2023-01-01.sql'],
-            (new DateTime('2023-01-01'))->getTimestamp(),
-        );
-        $filesystem->touch(
-            [self::$kernel->getProjectDir() . '/backups/secondary-db_test_2-2023-01-02.sql'],
-            (new DateTime('2023-01-02'))->getTimestamp(),
-        );
 
         foreach (range(1, 10) as $day) {
             $date = new DateTime("2022-04-$day");
@@ -126,6 +122,16 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
 
             $filesystem->touch(
                 [self::$kernel->getProjectDir() . "/backups/main-db_test_1-2022-04-$formattedDay.sql"],
+                $date->getTimestamp()
+            );
+        }
+
+        foreach (range(1, 5) as $day) {
+            $date = new DateTime("2023-01-$day");
+            $formattedDay = str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+
+            $filesystem->touch(
+                [self::$kernel->getProjectDir() . "/backups/secondary-db_test_2-2023-01-$formattedDay.sql"],
                 $date->getTimestamp()
             );
         }
@@ -188,7 +194,10 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
 
         self::assertCount(2, $secondaryBackupFilesFinder); // Backup strategy is configured with `max_files: 2`
         self::assertArrayNotHasKey("$filePathPrefix-2023-01-01.sql", $secondaryBackupFiles);
-        self::assertArrayHasKey("$filePathPrefix-2023-01-02.sql", $secondaryBackupFiles);
+        self::assertArrayNotHasKey("$filePathPrefix-2023-01-02.sql", $secondaryBackupFiles);
+        self::assertArrayNotHasKey("$filePathPrefix-2023-01-03.sql", $secondaryBackupFiles);
+        self::assertArrayNotHasKey("$filePathPrefix-2023-01-04.sql", $secondaryBackupFiles);
+        self::assertArrayHasKey("$filePathPrefix-2023-01-05.sql", $secondaryBackupFiles);
         self::assertArrayHasKey("$filePathPrefix-$formattedTodayDate.sql", $secondaryBackupFiles);
     }
 
