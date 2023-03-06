@@ -37,9 +37,12 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
         $this->restoreDatabaseWithUrl();
 
         $filesystem = new Filesystem();
-        if (!$filesystem->exists([self::$kernel->getProjectDir() . '/backups'])) {
-            $filesystem->mkdir([self::$kernel->getProjectDir() . '/backups']);
+
+        if ($filesystem->exists([self::$kernel->getProjectDir() . '/backups'])) {
+            $filesystem->remove([self::$kernel->getProjectDir() . '/backups']);
         }
+
+        $filesystem->mkdir([self::$kernel->getProjectDir() . '/backups']);
     }
 
     /**
