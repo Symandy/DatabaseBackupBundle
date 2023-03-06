@@ -105,7 +105,17 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
     {
         self::bootKernel();
 
+        $existingFiles = (new Finder())
+            ->in([self::$kernel->getProjectDir() . '/backups'])
+            ->depth('== 0')
+            ->files()
+        ;
+
         $filesystem = new Filesystem();
+        foreach ($existingFiles as $file) {
+            $filesystem->remove($file->getRealPath());
+        }
+
         $filesystem->touch(
             [self::$kernel->getProjectDir() . '/backups/other-backup-db_test_1-2022-04-01.sql'],
             (new DateTime('2022-04-01'))->getTimestamp(),
