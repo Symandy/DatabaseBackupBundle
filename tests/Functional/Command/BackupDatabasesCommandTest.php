@@ -116,6 +116,8 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
             $filesystem->remove($file->getRealPath());
         }
 
+        self::assertCount(0, $existingFiles);
+
         $filesystem->touch(
             [self::$kernel->getProjectDir() . '/backups/other-backup-db_test_1-2022-04-01.sql'],
             (new DateTime('2022-04-01'))->getTimestamp(),
