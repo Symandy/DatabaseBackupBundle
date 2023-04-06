@@ -33,8 +33,8 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
      */
     protected function setUp(): void
     {
-        $this->restoreDatabaseWithParams();
-        $this->restoreDatabaseWithUrl();
+        $this->resetDatabaseWithParams();
+        $this->resetDatabaseWithUrl();
 
         $filesystem = new Filesystem();
 
@@ -49,7 +49,7 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
      * @throws DBALException
      * @throws MissingMappingDriverImplementation
      */
-    private function restoreDatabaseWithParams(): void
+    private function resetDatabaseWithParams(): void
     {
         $entityManager = $this->getEntityManager();
         $schemaManager = $entityManager->getConnection()->createSchemaManager();
@@ -67,7 +67,7 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
      * @throws DBALException
      * @throws MissingMappingDriverImplementation
      */
-    private function restoreDatabaseWithUrl(): void
+    private function resetDatabaseWithUrl(): void
     {
         $entityManager = $this->getEntityManager();
         $schemaManager = $entityManager->getConnection()->createSchemaManager();
@@ -218,8 +218,8 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
      */
     protected function tearDown(): void
     {
-        $this->restoreDatabaseWithParams();
-        $this->restoreDatabaseWithUrl();
+        $this->resetDatabaseWithParams();
+        $this->resetDatabaseWithUrl();
 
         $backupFiles = (new Finder())
             ->in([self::$kernel->getProjectDir() . '/backups'])
