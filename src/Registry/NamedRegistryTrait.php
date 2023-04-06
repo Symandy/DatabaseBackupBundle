@@ -6,12 +6,14 @@ namespace Symandy\DatabaseBackupBundle\Registry;
 
 use InvalidArgumentException;
 
+use function array_key_exists;
+use function sprintf;
+
 /**
  * @template T of object
  */
 trait NamedRegistryTrait
 {
-
     /** @var array<string, T> */
     private array $registry = [];
 
@@ -47,5 +49,4 @@ trait NamedRegistryTrait
     {
         $this->registry[$name] = $item;
     }
-
 }

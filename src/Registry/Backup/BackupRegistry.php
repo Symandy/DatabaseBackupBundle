@@ -14,7 +14,6 @@ use Symandy\DatabaseBackupBundle\Registry\NamedRegistryTrait;
  */
 final class BackupRegistry implements NamedRegistry
 {
-
     /** @use NamedRegistryTrait<Backup> */
     use NamedRegistryTrait;
 
@@ -26,5 +25,4 @@ final class BackupRegistry implements NamedRegistry
     {
         $this->register($name, $this->backupFactory->createNamed($name, $options));
     }
-
 }

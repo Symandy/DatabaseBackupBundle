@@ -13,7 +13,6 @@ use ValueError;
 
 final class ConfigurationTest extends TestCase
 {
-
     public function testDefaultOptions(): void
     {
         $configuration = $this->processConfiguration();
@@ -30,10 +29,10 @@ final class ConfigurationTest extends TestCase
             'backups' => [
                 'test' => [
                     'connection' => [
-                        'driver' => 'unknown'
-                    ]
-                ]
-            ]
+                        'driver' => 'unknown',
+                    ],
+                ],
+            ],
         ]]);
     }
 
@@ -43,8 +42,8 @@ final class ConfigurationTest extends TestCase
 
         $this->processConfiguration([[
             'backups' => [
-                'test' => []
-            ]
+                'test' => [],
+            ],
         ]]);
     }
 
@@ -55,9 +54,9 @@ final class ConfigurationTest extends TestCase
         $this->processConfiguration([[
             'backups' => [
                 'test' => [
-                    'connection' => []
-                ]
-            ]
+                    'connection' => [],
+                ],
+            ],
         ]]);
     }
 
@@ -70,8 +69,8 @@ final class ConfigurationTest extends TestCase
                         'driver' => 'mysql',
                         'configuration' => [],
                     ],
-                ]
-            ]
+                ],
+            ],
         ]]);
 
         self::assertEquals(ConnectionDriver::MySQL, $configuration['backups']['test']['connection']['driver']);
@@ -82,9 +81,9 @@ final class ConfigurationTest extends TestCase
                     'connection' => [
                         'driver' => ConnectionDriver::MySQL,
                         'configuration' => [],
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]]);
 
         self::assertEquals(ConnectionDriver::MySQL, $configuration['backups']['test']['connection']['driver']);
@@ -99,10 +98,10 @@ final class ConfigurationTest extends TestCase
             'backups' => [
                 'test' => [
                     'connection' => [
-                        'driver' => 'mysql', 'unknown-parameter' => 'test'
-                    ]
-                ]
-            ]
+                        'driver' => 'mysql', 'unknown-parameter' => 'test',
+                    ],
+                ],
+            ],
         ]]);
     }
 
@@ -115,9 +114,9 @@ final class ConfigurationTest extends TestCase
             'backups' => [
                 'test' => [
                     'connection' => [
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]]);
     }
 
@@ -133,16 +132,16 @@ final class ConfigurationTest extends TestCase
                             'password' => 'password-test',
                             'host' => 'host-test',
                             'port' => 0000,
-                            'databases' => ['db-1', 'db-2']
-                        ]
-                    ]
+                            'databases' => ['db-1', 'db-2'],
+                        ],
+                    ],
                 ],
                 'test2' => [
                     'connection' => [
-                        'url' => 'url://host:9999'
-                    ]
-                ]
-            ]
+                        'url' => 'url://host:9999',
+                    ],
+                ],
+            ],
         ]]);
 
         self::assertNotEmpty($configuration);
@@ -181,5 +180,4 @@ final class ConfigurationTest extends TestCase
 
         return $processor->processConfiguration(new Configuration(), $configs);
     }
-
 }

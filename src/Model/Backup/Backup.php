@@ -8,7 +8,6 @@ use Symandy\DatabaseBackupBundle\Model\Connection\Connection;
 
 class Backup
 {
-
     public function __construct(
         private readonly string $name,
         private readonly Connection $connection,
@@ -30,5 +29,4 @@ class Backup
     {
         return $this->strategy;
     }
-
 }

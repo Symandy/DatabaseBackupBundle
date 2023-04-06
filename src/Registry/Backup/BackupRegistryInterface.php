@@ -12,7 +12,5 @@ use Symandy\DatabaseBackupBundle\Registry\NamedRegistry;
  */
 interface BackupRegistryInterface extends NamedRegistry
 {
-
     public function registerFromNameAndOptions(string $name, array $options): void;
-
 }

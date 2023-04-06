@@ -9,10 +9,8 @@ namespace Symandy\DatabaseBackupBundle\Factory;
  */
 interface NamedFactoryInterface
 {
-
     /**
      * @return T
      */
     public function createNamed(string $name, array $options): object;
-
 }

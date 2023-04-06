@@ -9,7 +9,6 @@ namespace Symandy\DatabaseBackupBundle\Registry;
  */
 interface NamedRegistry
 {
-
     /**
      * @return array<string, T>
      */
@@ -26,5 +25,4 @@ interface NamedRegistry
      * @param T $item
      */
     public function register(string $name, object $item): void;
-
 }

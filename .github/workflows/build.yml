@@ -51,6 +51,9 @@ jobs:
             -   name: Run static analysis
                 run: composer run-script analyse
 
+            -   name: Run PHP CS Fixer
+                run: composer run-script cs-fixer
+
             -   name: Execute tests (Unit tests) via PHPUnit
                 env:
                     SYMFONY_DEPRECATIONS_HELPER: 'max[direct]=0'

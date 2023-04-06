@@ -11,7 +11,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class SymandyDatabaseBackupBundleTest extends TestCase
 {
-
     public function testBuild(): void
     {
         $containerBuilder = $this->createMock(ContainerBuilder::class);
@@ -23,5 +22,4 @@ final class SymandyDatabaseBackupBundleTest extends TestCase
         $bundle = new SymandyDatabaseBackupBundle();
         $bundle->build($containerBuilder);
     }
-
 }

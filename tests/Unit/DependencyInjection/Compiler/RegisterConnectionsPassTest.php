@@ -18,7 +18,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class RegisterConnectionsPassTest extends TestCase
 {
-
     /**
      * @throws Exception
      */
@@ -60,11 +59,10 @@ final class RegisterConnectionsPassTest extends TestCase
             'server-1' => [
                 'connection' => [
                     'driver' => ConnectionDriver::MySQL,
-                    'configuration' => []
+                    'configuration' => [],
                 ],
-                'strategy' => []
-            ]
+                'strategy' => [],
+            ],
         ];
     }
-
 }

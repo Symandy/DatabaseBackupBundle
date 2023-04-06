@@ -12,7 +12,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 final class SymandyDatabaseBackupExtension extends ConfigurableExtension
 {
-
     /**
      * @throws Exception
      */
@@ -23,5 +22,4 @@ final class SymandyDatabaseBackupExtension extends ConfigurableExtension
 
         $container->setParameter('symandy.backups', $mergedConfig['backups']);
     }
-
 }

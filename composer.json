@@ -38,9 +38,11 @@
         "symfony/console": "^6.0",
         "doctrine/orm": "^2.11",
         "symfony/dotenv": "^6.0",
-        "webmozart/assert": "^1.11"
+        "webmozart/assert": "^1.11",
+        "friendsofphp/php-cs-fixer": "^3.16"
     },
     "scripts": {
+        "cs-fixer": "vendor/bin/php-cs-fixer fix --dry-run",
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/phpunit"
     }

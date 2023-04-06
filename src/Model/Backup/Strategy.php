@@ -6,7 +6,6 @@ namespace Symandy\DatabaseBackupBundle\Model\Backup;
 
 class Strategy
 {
-
     public function __construct(
         private readonly ?int $maxFiles = null,
         private readonly ?string $backupDirectory = null
@@ -22,5 +21,4 @@ class Strategy
     {
         return $this->backupDirectory;
     }
-
 }

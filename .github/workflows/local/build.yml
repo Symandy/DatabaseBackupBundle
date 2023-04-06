@@ -43,6 +43,9 @@ jobs:
             -   name: Run static analysis
                 run: composer run-script analyse
 
+            -   name: Run PHP CS Fixer
+                run: composer run-script cs-fixer
+
 #            -   name: Mysql Dump
 #                run: MYSQL_PWD=root mysqldump -u root -h 172.17.0.2 -P 3306 --databases db_test_1 > db_test_1.sql
 

@@ -6,7 +6,6 @@ namespace Symandy\DatabaseBackupBundle\Model\Connection;
 
 final class MySQLConnection implements Connection
 {
-
     /**
      * @param array<int, string> $databases
      */
@@ -57,8 +56,7 @@ final class MySQLConnection implements Connection
             'password' => $this->getPassword(),
             'host' => $this->getHost(),
             'port' => $this->getPort(),
-            'databases' => $this->getDatabases()
+            'databases' => $this->getDatabases(),
         ];
     }
-
 }

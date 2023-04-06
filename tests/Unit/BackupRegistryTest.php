@@ -16,7 +16,6 @@ use Symandy\DatabaseBackupBundle\Registry\Backup\BackupRegistry;
 
 final class BackupRegistryTest extends TestCase
 {
-
     public function testRegisterFromNameAndOptions(): void
     {
         $backupFactory = new BackupFactory(new ConnectionFactory(), new Factory(Strategy::class));
@@ -24,7 +23,7 @@ final class BackupRegistryTest extends TestCase
 
         $options = [
             'connection' => ['driver' => ConnectionDriver::MySQL, 'configuration' => []],
-            'strategy' => ['max_files' => 1, 'backup_directory' => '/path/to/backup/dir']
+            'strategy' => ['max_files' => 1, 'backup_directory' => '/path/to/backup/dir'],
         ];
 
         $backup = new Backup('backup-1', new MySQLConnection(), new Strategy(1, '/path/to/backup/dir'));
@@ -43,7 +42,7 @@ final class BackupRegistryTest extends TestCase
 
         $options = [
             'connection' => ['url' => 'mysql://user:password@hostname:9999/db_1'],
-            'strategy' => ['max_files' => 1, 'backup_directory' => '/path/to/backup/dir']
+            'strategy' => ['max_files' => 1, 'backup_directory' => '/path/to/backup/dir'],
         ];
 
         $expectedBackup = new Backup(
@@ -73,10 +72,10 @@ final class BackupRegistryTest extends TestCase
                     'password' => 'secret',
                     'host' => 'remote',
                     'port' => 9998,
-                    'databases' => ['db_2']
-                ]
+                    'databases' => ['db_2'],
+                ],
             ],
-            'strategy' => ['max_files' => 1, 'backup_directory' => '/path/to/backup/dir']
+            'strategy' => ['max_files' => 1, 'backup_directory' => '/path/to/backup/dir'],
         ];
 
         $expectedBackup = new Backup(
@@ -91,5 +90,4 @@ final class BackupRegistryTest extends TestCase
         self::assertTrue($backupRegistry->has('backup-1'));
         self::assertEquals($expectedBackup, $backupRegistry->get('backup-1'));
     }
-
 }

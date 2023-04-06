@@ -16,7 +16,6 @@ use Symandy\DatabaseBackupBundle\Model\Connection\ConnectionDriver;
  */
 final class ConnectionFactory implements FactoryInterface
 {
-
     public function create(array $options): Connection
     {
         $connectionUrl = $options['url'] ?? null;
@@ -42,5 +41,4 @@ final class ConnectionFactory implements FactoryInterface
 
         return $factory->create($options['configuration']);
     }
-
 }

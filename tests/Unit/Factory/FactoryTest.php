@@ -11,7 +11,6 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExcep
 
 final class FactoryTest extends TestCase
 {
-
     /** @noinspection PhpUnhandledExceptionInspection */
     public function testCreateValidOptions(): void
     {
@@ -35,5 +34,4 @@ final class FactoryTest extends TestCase
 
         $fooFactory->create($options);
     }
-
 }

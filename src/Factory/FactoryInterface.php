@@ -9,10 +9,8 @@ namespace Symandy\DatabaseBackupBundle\Factory;
  */
 interface FactoryInterface
 {
-
     /**
      * @return T
      */
     public function create(array $options): object;
-
 }

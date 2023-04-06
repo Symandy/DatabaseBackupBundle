@@ -10,7 +10,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 final class Configuration implements ConfigurationInterface
 {
-
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('symandy_database_backup');
@@ -34,7 +33,7 @@ final class Configuration implements ConfigurationInterface
                                     ->variableNode('driver')
                                         ->beforeNormalization()
                                             ->ifString()
-                                            ->then(fn(string $v) => ConnectionDriver::from($v))
+                                            ->then(fn (string $v) => ConnectionDriver::from($v))
                                         ->end()
                                     ->end()
                                     ->arrayNode('configuration')
@@ -64,5 +63,4 @@ final class Configuration implements ConfigurationInterface
 
         return $treeBuilder;
     }
-
 }
