@@ -30,6 +30,21 @@ return [
 As in the previous part, if Symfony Flex is not enabled, add the following file (`symandy_database_backup.yaml`) 
 to `config/packages` directory.
 
+#### Basic configuration
+If the only purpose is to back up the database of the current project, use the basic configuration file.
+
+```yaml
+symandy_database_backup:
+    backups:
+        app:
+            connection:
+                url: "%env(DATABASE_URL)%"
+            strategy:
+                max_files: 5
+                backup_directory: "%kernel.project_dir%/backups"
+```
+
+#### Advanced usages
 ```yaml
 symandy_database_backup:
     backups:
@@ -50,6 +65,13 @@ symandy_database_backup:
                 # backup_directory: "/var/www/backups" # The directory must be created and must have the right permissions
                 backup_directory: "%kernel.project_dir%/backups"
                 # backup_directory: ~ # The current directory will be used if no value is passed
+
+        bar:
+            # Use Doctrine database url env parameter 
+            connection:
+                url: "%env(DATABASE_URL)%" # url key will ALWAYS override array configuration  
+                configuration:
+                    user: john # Overridden by url
 ```
 
 ### Drivers

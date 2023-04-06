@@ -27,14 +27,15 @@ jobs:
         strategy:
             matrix:
                 php-version:
-                    - 8.1
+#                    - 8.1
+                    - 8.2 # Cannot run both version in parallel as creating database on the second one fails (already exists)
 
         steps:
             -   uses: shivammathur/setup-php@v2
                 with:
                     php-version: ${{ matrix.php-version }}
 
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v3
 
             -   name: Install Dependencies
                 run: composer update -q --no-ansi --no-interaction --no-progress

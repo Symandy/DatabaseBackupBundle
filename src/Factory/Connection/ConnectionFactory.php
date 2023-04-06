@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symandy\DatabaseBackupBundle\Factory\Connection;
 
 use InvalidArgumentException;
+use Symandy\DatabaseBackupBundle\Builder\ConfigurationBuilder;
 use Symandy\DatabaseBackupBundle\Factory\Factory;
 use Symandy\DatabaseBackupBundle\Factory\FactoryInterface;
 use Symandy\DatabaseBackupBundle\Model\Connection\Connection;
@@ -18,6 +19,15 @@ final class ConnectionFactory implements FactoryInterface
 
     public function create(array $options): Connection
     {
+        $connectionUrl = $options['url'] ?? null;
+
+        if (null !== $connectionUrl) {
+            ['driver' => $driver, 'configuration' => $configuration] = ConfigurationBuilder::buildFromUrl($connectionUrl);
+
+            $options['driver'] = $driver;
+            $options['configuration'] = $configuration;
+        }
+
         /** @var ConnectionDriver $driver */
         $driver =
             $options['driver'] ??

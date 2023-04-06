@@ -21,3 +21,10 @@ parameters:
         - '#Method Symandy\\Tests\\DatabaseBackupBundle\\Unit\\DependencyInjection\\Compiler\\RegisterConnectionsPassTest::getConnectionsConfiguration\(\) return type has no value type specified in iterable type array.#'
         - '#Method Symandy\\Tests\\DatabaseBackupBundle\\Unit\\DependencyInjection\\ConfigurationTest::processConfiguration\(\) has parameter \$configs with no value type specified in iterable type array.#'
         - '#Method Symandy\\Tests\\DatabaseBackupBundle\\Unit\\DependencyInjection\\ConfigurationTest::processConfiguration\(\) return type has no value type specified in iterable type array.#'
+        - message: '#^Static method Symandy\\Tests\\DatabaseBackupBundle\\Unit\\Builder\\ConfigurationBuilderTest\:\:provideUrls\(\) is unused\.$#'
+          path: tests/*
+        - message: '#^Method Symandy\\Tests\\DatabaseBackupBundle\\Unit\\Builder\\ConfigurationBuilderTest\:\:testBuildFromUrl\(\) has parameter \$expected with no value type specified in iterable type array\.$#'
+          path: tests/*
+        - message: '#^Method Symandy\\Tests\\DatabaseBackupBundle\\Unit\\Builder\\ConfigurationBuilderTest\:\:provideUrls\(\) return type has no value type specified in iterable type array\.$#'
+          path: tests/*
+
