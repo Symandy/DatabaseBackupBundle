@@ -27,7 +27,8 @@ jobs:
         strategy:
             matrix:
                 php-version:
-                    - 8.1
+#                    - 8.1
+                    - 8.2 # Cannot run both version in parallel as creating database on the second one fails (already exists)
 
         steps:
             -   uses: shivammathur/setup-php@v2
