@@ -10,11 +10,11 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 /**
  * @template T of object
+ *
  * @implements FactoryInterface<T>
  */
 class Factory implements FactoryInterface
 {
-
     private readonly ObjectNormalizer $normalizer;
 
     /**
@@ -35,5 +35,4 @@ class Factory implements FactoryInterface
 
         return $object;
     }
-
 }

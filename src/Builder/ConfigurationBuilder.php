@@ -49,7 +49,7 @@ final class ConfigurationBuilder
 
         return [
             'driver' => $driver,
-            'configuration' => $configuration
+            'configuration' => $configuration,
         ];
     }
 }

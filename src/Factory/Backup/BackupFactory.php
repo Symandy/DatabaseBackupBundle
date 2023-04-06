@@ -15,9 +15,7 @@ use Symandy\DatabaseBackupBundle\Model\Backup\Strategy;
  */
 final class BackupFactory implements NamedFactoryInterface
 {
-
     /**
-     * @param ConnectionFactory $connectionFactory
      * @param FactoryInterface<Strategy> $strategyFactory
      */
     public function __construct(
@@ -34,5 +32,4 @@ final class BackupFactory implements NamedFactoryInterface
             $this->strategyFactory->create($options['strategy'])
         );
     }
-
 }

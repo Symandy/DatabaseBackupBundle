@@ -63,9 +63,9 @@ final class ConfigurationBuilderTest extends TestCase
                     'databases' => ['db_name'],
                     'host' => 'host',
                     'port' => 9999,
-                ]
+                ],
             ],
-            'url' => 'mysql://user:password@host:9999/db_name?additionalParameter=test'
+            'url' => 'mysql://user:password@host:9999/db_name?additionalParameter=test',
         ];
 
         yield 'mysql_2_null_values' => [
@@ -74,10 +74,10 @@ final class ConfigurationBuilderTest extends TestCase
                 'configuration' => [
                     'user' => null,
                     'password' => null,
-                    'databases' => ['db_name']
-                ]
+                    'databases' => ['db_name'],
+                ],
             ],
-            'url' => 'mysql:///db_name'
+            'url' => 'mysql:///db_name',
         ];
     }
 }

@@ -9,7 +9,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class RegisterConnectionsPass implements CompilerPassInterface
 {
-
     public function process(ContainerBuilder $container): void
     {
         if (!$container->has('symandy_database_backup.registry.backup_registry')) {
@@ -27,5 +26,4 @@ final class RegisterConnectionsPass implements CompilerPassInterface
 
         $container->getParameterBag()->remove('symandy.backups');
     }
-
 }

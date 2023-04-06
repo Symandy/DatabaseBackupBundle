@@ -19,6 +19,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Webmozart\Assert\Assert;
 
+use function in_array;
 use function iterator_to_array;
 use function range;
 use function str_pad;
@@ -249,7 +250,7 @@ final class BackupDatabasesCommandTest extends AbstractFunctionalTestCase
             'user' => $container->getParameter('test.database_user'),
             'password' => $container->getParameter('test.database_password'),
             'host' => $container->getParameter('test.database_host'),
-            'port' => $container->getParameter('test.database_port')
+            'port' => $container->getParameter('test.database_port'),
         ];
 
         if (!$withDbName) {

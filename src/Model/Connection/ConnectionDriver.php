@@ -6,7 +6,6 @@ namespace Symandy\DatabaseBackupBundle\Model\Connection;
 
 enum ConnectionDriver: string
 {
-
     case MySQL = 'mysql';
 
     /**
@@ -18,5 +17,4 @@ enum ConnectionDriver: string
             self::MySQL => MySQLConnection::class
         };
     }
-
 }

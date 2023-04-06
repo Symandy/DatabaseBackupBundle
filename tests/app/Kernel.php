@@ -12,7 +12,6 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
 final class Kernel extends BaseKernel
 {
-
     public function getProjectDir(): string
     {
         return __DIR__;
@@ -22,7 +21,7 @@ final class Kernel extends BaseKernel
     {
         return [
             new FrameworkBundle(),
-            new SymandyDatabaseBackupBundle()
+            new SymandyDatabaseBackupBundle(),
         ];
     }
 
@@ -34,5 +33,4 @@ final class Kernel extends BaseKernel
         $loader->load($this->getProjectDir() . '/config/packages/config.yaml');
         $loader->load($this->getProjectDir() . '/config/services.yaml');
     }
-
 }

@@ -21,15 +21,18 @@ use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
+use function array_splice;
+use function getcwd;
+use function iterator_to_array;
+use function sprintf;
 use function Symfony\Component\String\u;
 
 #[AsCommand(
     name: 'symandy:databases:backup',
-    description: "Dump and export databases from configuration"
+    description: 'Dump and export databases from configuration'
 )]
 final class BackupDatabasesCommand extends Command
 {
-
     private Filesystem $filesystem;
 
     public function __construct(private readonly BackupRegistry $backupRegistry)
@@ -86,7 +89,7 @@ final class BackupDatabasesCommand extends Command
             $backupName = $backup->getName();
 
             if ([] === $connection->getDatabases()) {
-                $io->warning(sprintf("No database to backup in %s configuration, Skipping", $backupName));
+                $io->warning(sprintf('No database to backup in %s configuration, Skipping', $backupName));
 
                 continue;
             }
@@ -104,7 +107,7 @@ final class BackupDatabasesCommand extends Command
                 throw new RuntimeException('Unable to get the current directory, check the user permissions')
             ;
 
-            $io->info(sprintf("The backup %s is in progress", $backupName));
+            $io->info(sprintf('The backup %s is in progress', $backupName));
 
             foreach ($connection->getDatabases() as $database) {
                 if ($output->isVerbose()) {
@@ -126,7 +129,7 @@ final class BackupDatabasesCommand extends Command
                     'DB_PORT' => $connection->getPort(),
                     'DB_NAME' => $database,
                     'MYSQL_PWD' => $connection->getPassword(),
-                    'FILEPATH' => $filePath
+                    'FILEPATH' => $filePath,
                 ]);
 
                 if (!$process->isSuccessful()) {
@@ -157,7 +160,7 @@ final class BackupDatabasesCommand extends Command
                     array_splice($files, $filesToDeleteCount);
 
                     if (1 === $filesToDeleteCount) {
-                       $io->warning('Reached the max backup files limit, removing the oldest one');
+                        $io->warning('Reached the max backup files limit, removing the oldest one');
                     } else {
                         $io->warning(sprintf(
                             'Reached the max backup files limit, removing the %d oldest ones',
@@ -180,5 +183,4 @@ final class BackupDatabasesCommand extends Command
 
         return Command::SUCCESS;
     }
-
 }

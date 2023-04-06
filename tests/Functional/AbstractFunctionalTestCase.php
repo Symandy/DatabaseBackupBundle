@@ -9,10 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 abstract class AbstractFunctionalTestCase extends WebTestCase
 {
-
     protected static function getKernelClass(): string
     {
         return Kernel::class;
     }
-
 }
