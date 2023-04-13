@@ -114,7 +114,7 @@ final class BackupDatabasesCommand extends Command
                     $io->comment("Backup for $database database has started");
                 }
 
-                $date = (new DateTime())->format('Y-m-d');
+                $date = (new DateTime())->format($backup->getStrategy()->getBackupNameDateFormat()?$backup->getStrategy()->getBackupNameDateFormat():'Y-m-d-h-i-s');
                 $filePath = "$backupDirectory/$backupName-$database-$date.sql";
 
                 $process = Process::fromShellCommandline(

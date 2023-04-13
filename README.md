@@ -1,6 +1,6 @@
 # DatabaseBackupBundle
 
-DatabaseBackupBundle is a Symfony Bundle to manage your databases backup.  
+DatabaseBackupBundle is a Symfony Bundle to manage your databases backup.
 
 [![Build](https://github.com/Symandy/DatabaseBackupBundle/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Symandy/DatabaseBackupBundle/actions/workflows/build.yml)
 
@@ -10,11 +10,11 @@ DatabaseBackupBundle is a Symfony Bundle to manage your databases backup.
 composer require symandy/database-backup-bundle
 ```
 
-If [Symfony Flex](https://github.com/symfony/flex) is not enabled yet for the bundle (A PR on 
+If [Symfony Flex](https://github.com/symfony/flex) is not enabled yet for the bundle (A PR on
 [symfony/recipes-contrib](https://github.com/symfony/recipes-contrib) will be submitted soon), add the following lines
 to `config/bundles.php`.
 
-```php 
+```php
 <?php
 
 return [
@@ -27,7 +27,7 @@ return [
 ## Configuration
 
 ### YAML configuration
-As in the previous part, if Symfony Flex is not enabled, add the following file (`symandy_database_backup.yaml`) 
+As in the previous part, if Symfony Flex is not enabled, add the following file (`symandy_database_backup.yaml`)
 to `config/packages` directory.
 
 #### Basic configuration
@@ -65,11 +65,12 @@ symandy_database_backup:
                 # backup_directory: "/var/www/backups" # The directory must be created and must have the right permissions
                 backup_directory: "%kernel.project_dir%/backups"
                 # backup_directory: ~ # The current directory will be used if no value is passed
+                # backup_name_date_format: 'Y-m-d' # will be used if no value is passed
 
         bar:
-            # Use Doctrine database url env parameter 
+            # Use Doctrine database url env parameter
             connection:
-                url: "%env(DATABASE_URL)%" # url key will ALWAYS override array configuration  
+                url: "%env(DATABASE_URL)%" # url key will ALWAYS override array configuration
                 configuration:
                     user: john # Overridden by url
 ```

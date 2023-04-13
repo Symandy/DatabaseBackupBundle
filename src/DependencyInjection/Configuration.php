@@ -53,6 +53,7 @@ final class Configuration implements ConfigurationInterface
                                 ->children()
                                     ->integerNode('max_files')->isRequired()->defaultNull()->end()
                                     ->scalarNode('backup_directory')->isRequired()->defaultNull()->end()
+                                    ->scalarNode('backup_name_date_format')->end()
                                 ->end()
                             ->end()
                         ->end()
