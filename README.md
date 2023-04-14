@@ -65,7 +65,7 @@ symandy_database_backup:
                 # backup_directory: "/var/www/backups" # The directory must be created and must have the right permissions
                 backup_directory: "%kernel.project_dir%/backups"
                 # backup_directory: ~ # The current directory will be used if no value is passed
-                # backup_name_date_format: 'Y-m-d' # will be used if no value is passed
+                # date_format: 'Y-m-d' # will be used if no value is passed
 
         bar:
             # Use Doctrine database url env parameter
