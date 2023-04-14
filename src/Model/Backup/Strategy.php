@@ -9,9 +9,10 @@ class Strategy
     public function __construct(
         private readonly ?int $maxFiles = null,
         private readonly ?string $backupDirectory = null,
-        private readonly ?string $backupNameDateFormat = 'Y-m-d'
+        private readonly ?string $dateFormat = 'Y-m-d'
     ) {
     }
+
     public function getMaxFiles(): ?int
     {
         return $this->maxFiles;
@@ -22,8 +23,8 @@ class Strategy
         return $this->backupDirectory;
     }
 
-    public function getBackupNameDateFormat(): ?string
+    public function getDateFormat(): ?string
     {
-        return $this->backupNameDateFormat;
+        return $this->dateFormat;
     }
 }
