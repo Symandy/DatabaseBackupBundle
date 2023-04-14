@@ -4,3 +4,4 @@
 /tests/app/var
 /.env.local
 /.env.local.php
+.php-cs-fixer.cache
