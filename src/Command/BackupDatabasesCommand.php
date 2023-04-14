@@ -82,6 +82,12 @@ final class BackupDatabasesCommand extends Command
 
         $mysqldump = (new ExecutableFinder())->find('mysqldump');
 
+        if (null === $mysqldump) {
+            $io->error('Cannot find "mysqldump" executable');
+
+            return Command::INVALID;
+        }
+
         /** @var Backup $backup */
         foreach ($backupsToExecute as $backup) {
             /** @var MySQLConnection $connection */
