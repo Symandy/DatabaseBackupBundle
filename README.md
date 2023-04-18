@@ -65,7 +65,7 @@ symandy_database_backup:
                 # backup_directory: "/var/www/backups" # The directory must be created and must have the right permissions
                 backup_directory: "%kernel.project_dir%/backups"
                 # backup_directory: ~ # The current directory will be used if no value is passed
-                # date_format: 'Y-m-d' # will be used if no value is passed
+                date_format: 'Y-m-d-His' # The date format to use in backup files (default: 'Y-m-d')
 
         bar:
             # Use Doctrine database url env parameter
@@ -86,4 +86,4 @@ Once the backups are configured, you only have to run the following command to g
 php bin/console symandy:databases:backup
 ```
 
-It will generate one file by database in the format `<backup_name>-<database>-<current_year>-<current_month>-<current_day>.sql`.
+It will generate one file by database in the format `<backup_name>-<database>-<date_format>.sql`.
