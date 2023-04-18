@@ -1,9 +1,10 @@
 # CHANGELOG
 
-## 0.3.1
+## 0.4.0
+* [Configuration] Add `date_format` option in https://github.com/Symandy/DatabaseBackupBundle/pull/10
 * [Backup] Add error message on `mysqldump` not found in https://github.com/Symandy/DatabaseBackupBundle/pull/11
 
-**Full Changelog**: https://github.com/Symandy/DatabaseBackupBundle/compare/v0.3.0...v0.3.1
+**Full Changelog**: https://github.com/Symandy/DatabaseBackupBundle/compare/v0.3.0...v0.4.0
 
 ## 0.3.0
 * [Configuration] Add "url" connection configuration key in https://github.com/Symandy/DatabaseBackupBundle/pull/6
