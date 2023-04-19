@@ -87,3 +87,8 @@ php bin/console symandy:databases:backup
 ```
 
 It will generate one file by database in the format `<backup_name>-<database>-<date_format>.sql`.
+
+
+## Changelog
+
+You can see all the changes between versions here in the [CHANGELOG.md](CHANGELOG.md) or in the GitHub [releases page](https://github.com/Symandy/DatabaseBackupBundle/releases)
