@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## 0.4.0
+* [Configuration] Add `date_format` configuration node default value in https://github.com/Symandy/DatabaseBackupBundle/pull/14
+* [Configuration] Set `strategy` configuration node required in https://github.com/Symandy/DatabaseBackupBundle/pull/13
 * [Configuration] Add `date_format` option in https://github.com/Symandy/DatabaseBackupBundle/pull/10
 * [Backup] Add error message on `mysqldump` not found in https://github.com/Symandy/DatabaseBackupBundle/pull/11
 
