@@ -54,7 +54,7 @@ final class Configuration implements ConfigurationInterface
                                 ->children()
                                     ->integerNode('max_files')->isRequired()->defaultNull()->end()
                                     ->scalarNode('backup_directory')->isRequired()->defaultNull()->end()
-                                    ->scalarNode('date_format')->end()
+                                    ->scalarNode('date_format')->defaultValue('Y-m-d')->end()
                                 ->end()
                             ->end()
                         ->end()

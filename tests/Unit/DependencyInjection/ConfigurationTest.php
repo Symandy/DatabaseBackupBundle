@@ -150,6 +150,38 @@ final class ConfigurationTest extends TestCase
         ]]);
     }
 
+    public function testDateFormatDefaultValue(): void
+    {
+        $configuration = $this->processConfiguration([[
+            'backups' => [
+                'test' => [
+                    'connection' => ['url' => ''],
+                    'strategy' => ['max_files' => 1, 'backup_directory' => null],
+                ],
+            ],
+        ]]);
+
+        self::assertEquals('Y-m-d', $configuration['backups']['test']['strategy']['date_format']);
+    }
+
+    public function testDateFormatValue(): void
+    {
+        $configuration = $this->processConfiguration([[
+            'backups' => [
+                'test' => [
+                    'connection' => ['url' => ''],
+                    'strategy' => [
+                        'max_files' => 1,
+                        'backup_directory' => null,
+                        'date_format' => 'Y-m-d-His',
+                    ],
+                ],
+            ],
+        ]]);
+
+        self::assertEquals('Y-m-d-His', $configuration['backups']['test']['strategy']['date_format']);
+    }
+
     public function testNoBackupDirectory(): void
     {
         $this->expectException(InvalidConfigurationException::class);
@@ -186,7 +218,7 @@ final class ConfigurationTest extends TestCase
                     'connection' => [
                         'url' => 'url://host:9999',
                     ],
-                    'strategy' => ['max_files' => 1, 'backup_directory' => null],
+                    'strategy' => ['max_files' => 1, 'backup_directory' => null, 'date_format' => 'Y-m-d-Hi'],
                 ],
             ],
         ]]);
@@ -222,11 +254,16 @@ final class ConfigurationTest extends TestCase
         self::assertContainsEquals('db-2', $connectionConfiguration['databases']);
         self::assertNotContainsEquals('db-3', $connectionConfiguration['databases']);
 
+        self::assertEquals(1, $strategy['max_files']);
+        self::assertNull($strategy['backup_directory']);
+        self::assertEquals('Y-m-d', $strategy['date_format']);
+
         self::assertEquals('url://host:9999', $configuration['backups']['test2']['connection']['url']);
         self::assertNotContains('configuration', $configuration['backups']['test2']['connection']);
         self::assertNotContains('driver', $configuration['backups']['test2']['connection']);
         self::assertEquals(1, $configuration['backups']['test2']['strategy']['max_files']);
         self::assertNull($configuration['backups']['test2']['strategy']['backup_directory']);
+        self::assertEquals('Y-m-d-Hi', $configuration['backups']['test2']['strategy']['date_format']);
     }
 
     private function processConfiguration(array $configs = []): array
