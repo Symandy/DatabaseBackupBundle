@@ -50,6 +50,7 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                             ->arrayNode('strategy')
+                                ->isRequired()
                                 ->children()
                                     ->integerNode('max_files')->isRequired()->defaultNull()->end()
                                     ->scalarNode('backup_directory')->isRequired()->defaultNull()->end()

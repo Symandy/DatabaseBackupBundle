@@ -69,6 +69,7 @@ final class ConfigurationTest extends TestCase
                         'driver' => 'mysql',
                         'configuration' => [],
                     ],
+                    'strategy' => ['max_files' => 1, 'backup_directory' => null],
                 ],
             ],
         ]]);
@@ -82,6 +83,7 @@ final class ConfigurationTest extends TestCase
                         'driver' => ConnectionDriver::MySQL,
                         'configuration' => [],
                     ],
+                    'strategy' => ['max_files' => 1, 'backup_directory' => null],
                 ],
             ],
         ]]);
@@ -113,8 +115,51 @@ final class ConfigurationTest extends TestCase
         $this->processConfiguration([[
             'backups' => [
                 'test' => [
-                    'connection' => [
-                    ],
+                    'connection' => [],
+                ],
+            ],
+        ]]);
+    }
+
+    public function testNoStrategy(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The child config "strategy" under "symandy_database_backup.backups.test" must be configured.');
+
+        $this->processConfiguration([[
+            'backups' => [
+                'test' => [
+                    'connection' => ['url' => ''],
+                ],
+            ],
+        ]]);
+    }
+
+    public function testNoMaxFiles(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The child config "max_files" under "symandy_database_backup.backups.test.strategy" must be configured.');
+
+        $this->processConfiguration([[
+            'backups' => [
+                'test' => [
+                    'connection' => ['url' => ''],
+                    'strategy' => [],
+                ],
+            ],
+        ]]);
+    }
+
+    public function testNoBackupDirectory(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The child config "backup_directory" under "symandy_database_backup.backups.test.strategy" must be configured.');
+
+        $this->processConfiguration([[
+            'backups' => [
+                'test' => [
+                    'connection' => ['url' => ''],
+                    'strategy' => ['max_files' => 1],
                 ],
             ],
         ]]);
@@ -135,11 +180,13 @@ final class ConfigurationTest extends TestCase
                             'databases' => ['db-1', 'db-2'],
                         ],
                     ],
+                    'strategy' => ['max_files' => 1, 'backup_directory' => null],
                 ],
                 'test2' => [
                     'connection' => [
                         'url' => 'url://host:9999',
                     ],
+                    'strategy' => ['max_files' => 1, 'backup_directory' => null],
                 ],
             ],
         ]]);
@@ -147,6 +194,7 @@ final class ConfigurationTest extends TestCase
         self::assertNotEmpty($configuration);
         self::assertArrayHasKey('test', $configuration['backups']);
         self::assertArrayHasKey('connection', $configuration['backups']['test']);
+        self::assertArrayHasKey('strategy', $configuration['backups']['test']);
 
         $connectionNode = $configuration['backups']['test']['connection'];
         self::assertIsArray($connectionNode);
@@ -160,6 +208,11 @@ final class ConfigurationTest extends TestCase
         self::assertArrayHasKey('port', $connectionConfiguration);
         self::assertArrayHasKey('databases', $connectionConfiguration);
 
+        $strategy = $configuration['backups']['test']['strategy'];
+        self::assertIsArray($strategy);
+        self::assertArrayHasKey('max_files', $strategy);
+        self::assertArrayHasKey('backup_directory', $strategy);
+
         self::assertEquals('user-test', $connectionConfiguration['user']);
         self::assertEquals('password-test', $connectionConfiguration['password']);
         self::assertEquals('host-test', $connectionConfiguration['host']);
@@ -172,6 +225,8 @@ final class ConfigurationTest extends TestCase
         self::assertEquals('url://host:9999', $configuration['backups']['test2']['connection']['url']);
         self::assertNotContains('configuration', $configuration['backups']['test2']['connection']);
         self::assertNotContains('driver', $configuration['backups']['test2']['connection']);
+        self::assertEquals(1, $configuration['backups']['test2']['strategy']['max_files']);
+        self::assertNull($configuration['backups']['test2']['strategy']['backup_directory']);
     }
 
     private function processConfiguration(array $configs = []): array
