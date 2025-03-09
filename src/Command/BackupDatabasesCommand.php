@@ -23,6 +23,7 @@ use Symfony\Component\Process\Process;
 
 use function array_splice;
 use function getcwd;
+use function implode;
 use function iterator_to_array;
 use function sprintf;
 use function Symfony\Component\String\u;
@@ -112,12 +113,12 @@ final class BackupDatabasesCommand extends Command
                 getcwd() :
                 throw new RuntimeException('Unable to get the current directory, check the user permissions')
             ;
-            
+
             $dumpOnlyData = $backup->getStrategy()->getOnlyData();
             $backupTables = $backup->getStrategy()->getTables();
-            
+
             $io->info(sprintf('The backup %s is in progress', $backupName));
-            
+
             foreach ($connection->getDatabases() as $database) {
                 if ($output->isVerbose()) {
                     $io->comment("Backup for $database database has started");
@@ -127,13 +128,13 @@ final class BackupDatabasesCommand extends Command
                 $filePath = "$backupDirectory/$backupName-$database-$date.sql";
 
                 $process = Process::fromShellCommandline(
-                    \sprintf(
+                    sprintf(
                         '"${:MYSQL_DUMP}" -u "${:DB_USER}" -h "${:DB_HOST}" -P "${:DB_PORT}" %s "${:DB_NAME}" %s > "${:FILEPATH}"',
                         $dumpOnlyData ? '--no-create-info' : '',
-                        \implode(' ', $backupTables)
+                        implode(' ', $backupTables)
                     )
                 );
-                
+
                 $process->setPty(Process::isPtySupported());
                 $process->run(null, [
                     'MYSQL_DUMP' => $mysqldump,
@@ -144,7 +145,7 @@ final class BackupDatabasesCommand extends Command
                     'MYSQL_PWD' => $connection->getPassword(),
                     'FILEPATH' => $filePath,
                 ]);
-                
+
                 if (!$process->isSuccessful()) {
                     $message = '' !== $process->getErrorOutput() ? $process->getErrorOutput() : $process->getOutput();
 
