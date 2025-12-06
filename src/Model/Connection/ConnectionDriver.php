@@ -14,7 +14,7 @@ enum ConnectionDriver: string
     public function getConnectionClass(): string
     {
         return match ($this) {
-            self::MySQL => MySQLConnection::class
+            self::MySQL => MySQLConnection::class,
         };
     }
 }

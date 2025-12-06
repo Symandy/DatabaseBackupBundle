@@ -11,7 +11,7 @@ class Backup
     public function __construct(
         private readonly string $name,
         private readonly Connection $connection,
-        private readonly Strategy $strategy
+        private readonly Strategy $strategy,
     ) {
     }
 

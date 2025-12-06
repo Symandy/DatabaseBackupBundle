@@ -23,6 +23,7 @@ use Symfony\Component\Process\Process;
 
 use function array_splice;
 use function getcwd;
+use function implode;
 use function iterator_to_array;
 use function sprintf;
 use function Symfony\Component\String\u;
@@ -113,6 +114,9 @@ final class BackupDatabasesCommand extends Command
                 throw new RuntimeException('Unable to get the current directory, check the user permissions')
             ;
 
+            $dumpOnlyData = $backup->getStrategy()->getOnlyData();
+            $backupTables = $backup->getStrategy()->getTables();
+
             $io->info(sprintf('The backup %s is in progress', $backupName));
 
             foreach ($connection->getDatabases() as $database) {
@@ -124,7 +128,11 @@ final class BackupDatabasesCommand extends Command
                 $filePath = "$backupDirectory/$backupName-$database-$date.sql";
 
                 $process = Process::fromShellCommandline(
-                    '"${:MYSQL_DUMP}" -u "${:DB_USER}" -h "${:DB_HOST}" -P "${:DB_PORT}" "${:DB_NAME}" > "${:FILEPATH}"'
+                    sprintf(
+                        '"${:MYSQL_DUMP}" -u "${:DB_USER}" -h "${:DB_HOST}" -P "${:DB_PORT}" %s "${:DB_NAME}" %s > "${:FILEPATH}"',
+                        $dumpOnlyData ? '--no-create-info' : '',
+                        implode(' ', $backupTables)
+                    )
                 );
 
                 $process->setPty(Process::isPtySupported());

@@ -14,7 +14,7 @@ final class MySQLConnection implements Connection
         private readonly ?string $password = null,
         private readonly ?string $host = '127.0.0.1',
         private readonly ?int $port = 3306,
-        private readonly array $databases = []
+        private readonly array $databases = [],
     ) {
     }
 

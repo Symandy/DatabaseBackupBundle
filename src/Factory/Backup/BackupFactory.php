@@ -20,7 +20,7 @@ final class BackupFactory implements NamedFactoryInterface
      */
     public function __construct(
         private readonly ConnectionFactory $connectionFactory,
-        private readonly FactoryInterface $strategyFactory
+        private readonly FactoryInterface $strategyFactory,
     ) {
     }
 

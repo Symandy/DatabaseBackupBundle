@@ -44,6 +44,28 @@ symandy_database_backup:
                 backup_directory: "%kernel.project_dir%/backups"
 ```
 
+#### Basic configuration with Additional options
+If You don't need all tables in backup you can list tables that you need and 
+if you don't need 'CREATE TABLE' Statements(ex: you create database structure with migrations) ,
+you can set 'only_data' config option to have only 'INSERT' Statements in Backup Files
+
+```yaml
+symandy_database_backup:
+    backups:
+        app:
+            connection:
+                url: "%env(DATABASE_URL)%"
+            strategy:
+                max_files: 5
+                backup_directory: "%kernel.project_dir%/var/backups"
+                
+                only_data: true
+                tables:
+                    - 'Table_1'
+                    - 'Table_2'
+                    - 'Table_3'
+```
+
 #### Advanced usages
 ```yaml
 symandy_database_backup:
